@@ -1,0 +1,58 @@
+{
+  "pilotos": [
+    {
+      "id": "1",
+      "nombre": "APEX-88",
+      "carreras_ganadas": 15,
+      "updated_at": "2026-10-21T17:53:10.607Z"
+    },
+    {
+      "id": "2",
+      "nombre": "SLICK",
+      "carreras_ganadas": 12,
+      "updated_at": "2026-10-21T17:53:10.611Z"
+    },
+    {
+      "id": "3",
+      "nombre": "ZEPHYR",
+      "carreras_ganadas": 10,
+      "updated_at": "2026-10-21T17:53:10.611Z"
+    },
+    {
+      "id": "4",
+      "nombre": "CHASE",
+      "carreras_ganadas": 8,
+      "updated_at": "2026-10-21T17:53:10.611Z"
+    },
+    {
+      "id": "5",
+      "nombre": "TURBO-T",
+      "carreras_ganadas": 7,
+      "updated_at": "2026-10-21T17:53:10.611Z"
+    },
+    {
+      "id": "6",
+      "nombre": "VIPER",
+      "carreras_ganadas": 5,
+      "updated_at": "2026-10-21T17:53:10.611Z"
+    },
+    {
+      "id": "7",
+      "nombre": "PHOENIX",
+      "carreras_ganadas": 3,
+      "updated_at": "2026-10-21T17:53:10.611Z"
+    },
+    {
+      "id": "8",
+      "nombre": "BLAZE",
+      "carreras_ganadas": 2,
+      "updated_at": "2026-10-21T17:53:10.611Z"
+    },
+    {
+      "id": "1792605227394",
+      "nombre": "TESTER",
+      "carreras_ganadas": 1,
+      "updated_at": "2026-10-21T17:53:47.394Z"
+    }
+  ]
+}

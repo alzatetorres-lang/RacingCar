@@ -1,0 +1,96 @@
+{
+  "project_meta": {
+    "title": "Racing Car - Apex 88",
+    "genre": "Arcade Retro-Polygonal Racer",
+    "reference_aesthetic": "Virtua Racing / Horizon Chase Turbo / 90s Flat-Shaded 3D + 16-bit Pixel HUD"
+  },
+  "visual_style": {
+    "rendering": {
+      "geometry": "Low-poly estricto sin suavizado de normales (flatShading: true)",
+      "lighting": "Iluminación direccional cálida de atardecer con sombras duras proyectadas en asfalto",
+      "skybox": "Degradado crepuscular (púrpura #5A3B76, coral #E86F52, dorado #F9C762) con efecto de tramado (dithering/halftone) y sol plano gigante",
+      "particles": "Cubos blancos pixelados sin texturas complejas para el humo de escape y derrape"
+    },
+    "environment_themes": [
+      {
+        "id": "sunset_coast",
+        "elements": ["Océano low-poly a la izquierda", "Palmeras facetadas", "Montañas distantes en silueta", "Pianos (bordillos) alternos rojo/blanco"]
+      },
+      {
+        "id": "emerald_grove",
+        "name_display": "EMERALD GROVE",
+        "elements": ["Pinos y árboles frondosos geométricos", "Colinas facetadas en verde y marrón", "Asfalto gris oscuro (#333538) con línea central discontinua blanca"]
+      }
+    ],
+    "player_vehicle": {
+      "model_inspiration": "Ferrari F40 / Lamborghini Countach (años 80)",
+      "color_palette": {
+        "body": "#C81D25",
+        "stripes": "#FFFFFF",
+        "windows": "#1A1C23",
+        "taillights_glow": "#FF2A2A",
+        "headlights_glow": "#CCF2FF"
+      },
+      "details": ["Doble franja blanca longitudinal", "Matrícula trasera 'APEX-88'", "Cuatro salidas de escape", "Alerón trasero fijo", "Faros delanteros rectangulares con haz de luz volumétrico en asfalto"]
+    }
+  },
+  "hud_interface": {
+    "typography": {
+      "primary_font": "Pixel Art / Arcade 8-bit (ej. 'Press Start 2P')",
+      "stroke": "Borde negro sólido de 2px a 4px con sombra paralela inferior",
+      "title_logo_style": "Tipografía script años 80 con efecto cromo 3D y bisel rosa neón ('Racing Car')"
+    },
+    "layout": {
+      "top_left": {
+        "element": "Position Counter",
+        "label": "POS",
+        "label_color": "#FFFFFF",
+        "value_format": "8/8",
+        "value_gradient": ["#FFE600", "#FF8800"]
+      },
+      "top_center": {
+        "element": "Dynamic Race Status / Zone Banner",
+        "states": ["3... 2... 1... READY!", "GO!", "EMERALD GROVE"],
+        "colors": {
+          "countdown": "#FFD000",
+          "zone_title": "#FFFFFF"
+        }
+      },
+      "top_right": {
+        "element": "Lap Counter",
+        "label": "LAP",
+        "label_color": "#FFFFFF",
+        "value_format": "1/3",
+        "value_gradient": ["#FFE600", "#FF8800"]
+      },
+      "bottom_left": {
+        "element": "Speedometer",
+        "icon": "Engranaje metálico pixel-art giratorio",
+        "value_format": "{speed} MPH",
+        "value_color": "#FFFFFF"
+      },
+      "bottom_right": {
+        "element": "Minimap",
+        "container": "Caja cuadrada semitransparente (rgba(0,0,0,0.65)) con borde gris de 2px",
+        "content": "Trazado de pista en blanco/gris, borde costero azul y marcadores de posición (puntos rojo y amarillo)"
+      }
+    }
+  },
+  "gameplay_and_cameras": {
+    "physics_model": "Arcade puro con derrape asistido en curvas cerradas (S-curves) y adherencia alta en rectas",
+    "camera_modes": [
+      {
+        "id": "chase_cam",
+        "description": "Tercera persona trasera baja, FOV de 65°, ligero balanceo lateral al girar"
+      },
+      {
+        "id": "cinematic_aerial",
+        "description": "Vista isométrica/dron elevada para mostrar el trazado sinuoso y el derrape entre árboles"
+      },
+      {
+        "id": "reverse_hood_cam",
+        "description": "Cámara frontal mirando hacia el morro del coche para repeticiones o pantalla de victoria"
+      }
+    ]
+  }
+}

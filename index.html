@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Racing Car - Apex 88 (Retro Arcade Racer)</title>
+  <link rel="stylesheet" href="/src/style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
+</head>
+<body>
+  <div id="app">
+    <!-- WebGL Canvas for Three.js 3D Racing Engine -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- CRT Scanline & Glass Distortion Effect -->
+    <div class="crt-overlay" id="crt-overlay"></div>
+
+    <!-- VIEW 1: Attract Mode / Retro Intro Video -->
+    <div class="game-view" id="view-intro">
+      <video id="intro-video" src="/assets/video/intro.mp4" playsinline muted loop></video>
+      <div class="intro-overlay-text">
+        <div class="retro-blink">★ INSERT COIN / PRESS ANY KEY ★</div>
+        <button class="skip-intro-btn" id="btn-skip-intro">PRESS START &gt;</button>
+      </div>
+    </div>
+
+    <!-- VIEW 2: Title Screen & Pilot Registration -->
+    <div class="game-view hidden" id="view-title">
+      <div class="title-card">
+        <img src="/assets/images/logo-racing-car.jpg" alt="Racing Car" class="chrome-logo-img">
+        <div class="title-input-group">
+          <label for="pilot-name-input">ENTER PILOT CALLSIGN:</label>
+          <input type="text" id="pilot-name-input" class="arcade-input" value="APEX-88" maxlength="15" autocomplete="off" spellcheck="false">
+        </div>
+        <button class="arcade-btn" id="btn-title-start">PRESS START</button>
+        <div style="margin-top: 15px; font-size: 9px; color: #888;">© 198X ARCADE CORP / SUPABASE EDITION</div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: Garage & Pilot Difficulty Profile -->
+    <div class="game-view hidden" id="view-garage">
+      <div class="garage-container">
+        <!-- Pilot Status Card -->
+        <div class="panel-retro">
+          <h2>PILOT DOSSIER</h2>
+          <div class="stat-row">
+            <span>CALLSIGN:</span>
+            <span id="garage-pilot-name" style="color: var(--arcade-yellow);">APEX-88</span>
+          </div>
+          <div class="stat-row">
+            <span>CAREER WINS:</span>
+            <span id="garage-pilot-wins" style="color: var(--arcade-cyan);">0</span>
+          </div>
+          <div class="stat-row">
+            <span>LEAGUE RANK:</span>
+            <span id="garage-pilot-league" class="league-badge league-bronze">BRONZE</span>
+          </div>
+          <div class="stat-row">
+            <span>AI SPEED:</span>
+            <span id="garage-ai-speed">0.85x</span>
+          </div>
+          <div class="stat-row">
+            <span>CORNER SKILL:</span>
+            <span id="garage-ai-skill">50%</span>
+          </div>
+          <div class="stat-row">
+            <span>RUBBER-BAND:</span>
+            <span id="garage-ai-rubber">0%</span>
+          </div>
+        </div>
+
+        <!-- Circuit Information -->
+        <div class="panel-retro">
+          <h2>CIRCUIT SELECT</h2>
+          <div style="font-size: 13px; color: #fff; margin-bottom: 6px;">EMERALD GROVE & SUNSET COAST</div>
+          <div class="track-preview-box">
+            <img src="/assets/images/track-preview.jpg" alt="Emerald Grove Circuit">
+          </div>
+          <div style="font-size: 10px; color: #aaa;">LAPS: 3 | RIVALS: 7 | CONDITIONS: SUNSET DRY</div>
+        </div>
+
+        <div class="garage-actions">
+          <button class="arcade-btn" id="btn-race-now">★ RACE NOW ★</button>
+          <button class="arcade-btn secondary" id="btn-open-leaderboard">HALL OF FAME</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 4: In-Game Retro HUD Overlay -->
+    <div id="hud-overlay" class="hidden">
+      <!-- Top Left: Position Counter -->
+      <div class="hud-top-left">
+        <span class="hud-label">POS</span>
+        <span class="hud-value-gradient" id="hud-pos">8/8</span>
+      </div>
+
+      <!-- Top Center: Dynamic Banner / Countdown -->
+      <div class="hud-top-center">
+        <div class="hud-banner countdown" id="hud-banner">READY!</div>
+      </div>
+
+      <!-- Top Right: Lap Counter -->
+      <div class="hud-top-right">
+        <span class="hud-label">LAP</span>
+        <span class="hud-value-gradient" id="hud-lap">1/3</span>
+      </div>
+
+      <!-- Bottom Left: Spinning Cogwheel & Speedometer -->
+      <div class="hud-bottom-left">
+        <svg class="hud-gear-icon" id="hud-gear" viewBox="0 0 100 100">
+          <path d="M50 15 A35 35 0 0 0 15 50 A35 35 0 0 0 50 85 A35 35 0 0 0 85 50 A35 35 0 0 0 50 15 M50 35 A15 15 0 1 1 50 65 A15 15 0 0 1 50 35" fill="#888" stroke="#fff" stroke-width="4"/>
+          <circle cx="50" cy="50" r="10" fill="#222" stroke="#ffe600" stroke-width="3"/>
+        </svg>
+        <span class="hud-speed" id="hud-speed">0 MPH</span>
+      </div>
+
+      <!-- Bottom Center: Camera Toggle & Controls Help -->
+      <div class="hud-bottom-center">
+        <span class="camera-badge" id="hud-camera-badge">CAM: CHASE [C]</span>
+        <span style="font-size: 8px; color: #888;">[ARROWS/WASD] DRIVE | [SPACE] DRIFT | [ESC/P] PAUSE</span>
+      </div>
+
+      <!-- Bottom Right: Dynamic Canvas Minimap -->
+      <div class="hud-bottom-right">
+        <canvas id="minimap-canvas" width="140" height="140"></canvas>
+      </div>
+
+      <!-- Mobile Touch Controls (auto-detected or touch screen) -->
+      <div class="mobile-controls" id="mobile-controls" style="display: none;">
+        <div style="display: flex; gap: 12px;">
+          <button class="touch-btn" id="touch-left">◀</button>
+          <button class="touch-btn" id="touch-right">▶</button>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="touch-btn" id="touch-drift" style="background: rgba(255, 136, 0, 0.4);">⚡</button>
+          <button class="touch-btn" id="touch-brake">▼</button>
+          <button class="touch-btn" id="touch-gas" style="background: rgba(0, 210, 211, 0.4);">▲</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 5: Pause Menu -->
+    <div class="game-view hidden" id="view-pause">
+      <div class="pause-card">
+        <h2>★ PAUSED ★</h2>
+        <div style="font-size: 11px; color: #aaa; margin-bottom: 8px;">CAMERA MODE</div>
+        <div class="camera-toggle-row">
+          <button class="cam-btn active" id="btn-cam-chase">CHASE</button>
+          <button class="cam-btn" id="btn-cam-aerial">AERIAL</button>
+          <button class="cam-btn" id="btn-cam-front">FRONT</button>
+        </div>
+        <div class="volume-row">
+          <span>SFX VOLUME:</span>
+          <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.7">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <button class="arcade-btn" id="btn-resume-race">RESUME RACE</button>
+          <button class="arcade-btn secondary" id="btn-restart-race">RESTART</button>
+          <button class="arcade-btn secondary" id="btn-exit-garage">EXIT TO GARAGE</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 6: Victory Screen -->
+    <div class="game-view hidden" id="view-victory">
+      <div class="victory-card">
+        <div class="victory-title">VICTORY!</div>
+        <div class="victory-stats">
+          <div id="victory-save-msg">+1 WIN SAVED TO DATABASE!</div>
+          <div style="margin-top: 10px;" id="victory-total-wins">TOTAL WINS: 1</div>
+          <div style="color: var(--arcade-cyan); margin-top: 6px;" id="victory-league">LEAGUE: BRONZE</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <button class="arcade-btn" id="btn-victory-next">NEXT RACE</button>
+          <button class="arcade-btn secondary" id="btn-victory-leaderboard">HALL OF FAME</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 7: Hall of Fame / Leaderboard Modal -->
+    <div class="game-view hidden" id="view-leaderboard">
+      <div class="hall-of-fame-card">
+        <h2>🏆 TOP PILOTS - HALL OF FAME 🏆</h2>
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th>RANK</th>
+              <th>PILOT</th>
+              <th>WINS</th>
+              <th>LEAGUE</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-tbody">
+            <!-- Populated dynamically from Supabase / Backend -->
+          </tbody>
+        </table>
+        <div style="text-align: center;">
+          <button class="arcade-btn" id="btn-leaderboard-back">BACK TO GARAGE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
