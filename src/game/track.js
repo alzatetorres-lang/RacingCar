@@ -14,8 +14,8 @@ export const TRACK_CONFIGS = [
     centerLineColor: 0xffffff,
     groundColor: 0x2d5a27,
     fogColor: 0x5a3b76,
-    fogDensity: 0.0018,
-    skyTexture: '/assets/images/skybox-sunset.jpg',
+    fogDensity: 0.0012,
+    skyColor: 0x5a3b76,
     sunColor: 0xffd580,
     sunPosition: [-200, 120, -300],
     points: [
@@ -25,12 +25,12 @@ export const TRACK_CONFIGS = [
       new THREE.Vector3(140, 8, 420),
       new THREE.Vector3(260, 12, 450),
       new THREE.Vector3(380, 16, 380),
-      new THREE.Vector3(450, 22, 250),
-      new THREE.Vector3(390, 20, 120),
-      new THREE.Vector3(470, 18, 0),
-      new THREE.Vector3(480, 14, -140),
-      new THREE.Vector3(400, 10, -280),
-      new THREE.Vector3(260, 6, -350),
+      new THREE.Vector3(450, 20, 250),
+      new THREE.Vector3(390, 18, 120),
+      new THREE.Vector3(470, 16, 0),
+      new THREE.Vector3(480, 12, -140),
+      new THREE.Vector3(400, 8, -280),
+      new THREE.Vector3(260, 4, -350),
       new THREE.Vector3(120, 2, -320),
       new THREE.Vector3(-40, 0, -220),
       new THREE.Vector3(-60, 0, -90)
@@ -42,31 +42,31 @@ export const TRACK_CONFIGS = [
     shortName: 'CYBER CITY',
     theme: 'cyber',
     difficulty: 'HARD',
-    desc: 'Autopista nocturna elevada entre rascacielos iluminados, bordillos neón y curvas técnicas de 90°.',
+    desc: 'Autopista nocturna con rascacielos iluminados, bordillos neón y curvas técnicas.',
     trackWidth: 20,
-    roadColor: 0x15161e,
-    kerbColors: [0x00d2d3, 0xff007f], // Cyan & Electric Magenta
+    roadColor: 0x24283b,
+    kerbColors: [0x00f0ff, 0xff007f], // Cyan & Electric Magenta
     centerLineColor: 0x00ffff,
-    groundColor: 0x0a0c14,
-    fogColor: 0x120826,
-    fogDensity: 0.0022,
-    skyColor: 0x070514,
-    sunColor: 0x9b59b6,
-    sunPosition: [100, 150, -400],
+    groundColor: 0x161824,
+    fogColor: 0x241147,
+    fogDensity: 0.0010,
+    skyColor: 0x1b0838,
+    sunColor: 0x00f0ff, // Bright electric moonlight
+    sunPosition: [100, 160, -350],
     points: [
-      new THREE.Vector3(0, 5, 0),
-      new THREE.Vector3(0, 5, 200),
-      new THREE.Vector3(-80, 10, 360),
-      new THREE.Vector3(-220, 15, 420),
-      new THREE.Vector3(-380, 15, 340),
-      new THREE.Vector3(-420, 12, 160),
-      new THREE.Vector3(-320, 8, 0),
-      new THREE.Vector3(-240, 14, -160),
-      new THREE.Vector3(-140, 18, -320),
-      new THREE.Vector3(60, 14, -400),
-      new THREE.Vector3(220, 10, -320),
-      new THREE.Vector3(260, 6, -140),
-      new THREE.Vector3(180, 5, -40)
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 0, 200),
+      new THREE.Vector3(-80, 4, 360),
+      new THREE.Vector3(-220, 8, 420),
+      new THREE.Vector3(-380, 10, 340),
+      new THREE.Vector3(-420, 8, 160),
+      new THREE.Vector3(-320, 5, 0),
+      new THREE.Vector3(-240, 8, -160),
+      new THREE.Vector3(-140, 12, -320),
+      new THREE.Vector3(60, 8, -400),
+      new THREE.Vector3(220, 5, -320),
+      new THREE.Vector3(260, 2, -140),
+      new THREE.Vector3(180, 0, -40)
     ]
   },
   {
@@ -75,30 +75,30 @@ export const TRACK_CONFIGS = [
     shortName: 'MOJAVE CANYON',
     theme: 'desert',
     difficulty: 'FAST',
-    desc: 'Pista rápida a través de cañones de arenisca roja, mesetas y rectas de máxima velocidad.',
+    desc: 'Pista rápida entre cañones de arenisca roja, mesetas y sol radiante.',
     trackWidth: 19,
-    roadColor: 0x3d352e,
+    roadColor: 0x483e35,
     kerbColors: [0xffb703, 0x222222], // Amber & Dark Grey
     centerLineColor: 0xffd166,
-    groundColor: 0xbc6c25, // Sandstone ochre
-    fogColor: 0x8a3e14,
-    fogDensity: 0.0016,
-    skyColor: 0xff7b00,
-    sunColor: 0xffe66d,
-    sunPosition: [-400, 100, -200],
+    groundColor: 0xc87d3b, // Sandstone ochre
+    fogColor: 0xc87d3b,
+    fogDensity: 0.0010,
+    skyColor: 0xe67e22,
+    sunColor: 0xffe066,
+    sunPosition: [-350, 140, -250],
     points: [
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(0, 0, 240),
-      new THREE.Vector3(120, -4, 400),
-      new THREE.Vector3(280, -6, 480),
-      new THREE.Vector3(440, 2, 420),
-      new THREE.Vector3(520, 12, 260),
-      new THREE.Vector3(420, 16, 100),
-      new THREE.Vector3(340, 10, -60),
-      new THREE.Vector3(420, 4, -220),
-      new THREE.Vector3(360, -2, -380),
-      new THREE.Vector3(180, -4, -440),
-      new THREE.Vector3(20, -2, -340),
+      new THREE.Vector3(120, 2, 400),
+      new THREE.Vector3(280, 4, 480),
+      new THREE.Vector3(440, 8, 420),
+      new THREE.Vector3(520, 14, 260),
+      new THREE.Vector3(420, 12, 100),
+      new THREE.Vector3(340, 8, -60),
+      new THREE.Vector3(420, 5, -220),
+      new THREE.Vector3(360, 2, -380),
+      new THREE.Vector3(180, 1, -440),
+      new THREE.Vector3(20, 0, -340),
       new THREE.Vector3(-60, 0, -180)
     ]
   },
@@ -108,30 +108,30 @@ export const TRACK_CONFIGS = [
     shortName: 'FROST SUMMIT',
     theme: 'snow',
     difficulty: 'EXPERT',
-    desc: 'Paso montañoso nevado con horquillas cerradas, bordillos gélidos y aurora boreal.',
+    desc: 'Paso montañoso nevado con horquillas cerradas, bordillos gélidos y picos nevados.',
     trackWidth: 18,
-    roadColor: 0x252a36,
+    roadColor: 0x2d3445,
     kerbColors: [0x48cae4, 0xffffff], // Ice Blue & Snow White
     centerLineColor: 0xffffff,
-    groundColor: 0xd8e2dc, // Snow white
-    fogColor: 0x3a506b,
-    fogDensity: 0.002,
-    skyColor: 0x1b263b,
-    sunColor: 0xcaf0f8,
-    sunPosition: [-300, 140, 300],
+    groundColor: 0xdde5ed, // Snow white
+    fogColor: 0x5b7288,
+    fogDensity: 0.0010,
+    skyColor: 0x34495e,
+    sunColor: 0xffffff,
+    sunPosition: [-250, 150, 280],
     points: [
       new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(0, 4, 180),
-      new THREE.Vector3(80, 14, 320),
-      new THREE.Vector3(200, 26, 380),
-      new THREE.Vector3(320, 38, 300),
-      new THREE.Vector3(280, 34, 140),
-      new THREE.Vector3(160, 28, 40),
-      new THREE.Vector3(180, 22, -100),
-      new THREE.Vector3(300, 18, -200),
-      new THREE.Vector3(340, 12, -340),
-      new THREE.Vector3(220, 6, -420),
-      new THREE.Vector3(80, 2, -360),
+      new THREE.Vector3(0, 2, 180),
+      new THREE.Vector3(80, 8, 320),
+      new THREE.Vector3(200, 14, 380),
+      new THREE.Vector3(320, 20, 300),
+      new THREE.Vector3(280, 16, 140),
+      new THREE.Vector3(160, 12, 40),
+      new THREE.Vector3(180, 10, -100),
+      new THREE.Vector3(300, 8, -200),
+      new THREE.Vector3(340, 5, -340),
+      new THREE.Vector3(220, 2, -420),
+      new THREE.Vector3(80, 1, -360),
       new THREE.Vector3(-40, 0, -200)
     ]
   }
@@ -146,7 +146,7 @@ export class CircuitTrack {
     this.totalLength = 0;
     this.checkpoints = [];
 
-    // Scene group for this track so we can rebuild/switch smoothly
+    // Scene group for this track
     this.trackGroup = new THREE.Group();
     this.scene.add(this.trackGroup);
 
@@ -160,16 +160,13 @@ export class CircuitTrack {
     this.currentConfig = cfg;
     this.trackWidth = cfg.trackWidth;
 
-    // Clear old track elements
-    while (this.trackGroup.children.length > 0) {
-      const obj = this.trackGroup.children[0];
-      this.trackGroup.remove(obj);
-      if (obj.geometry) obj.geometry.dispose();
-      if (obj.material) {
-        if (Array.isArray(obj.material)) obj.material.forEach(m => m.dispose());
-        else obj.material.dispose();
+    // Cleanly clear trackGroup without disposing shared materials
+    this.trackGroup.traverse(child => {
+      if (child.isMesh && child.geometry) {
+        child.geometry.dispose();
       }
-    }
+    });
+    this.trackGroup.clear();
 
     this.buildCurrentTrack();
     return true;
@@ -441,15 +438,15 @@ export class CircuitTrack {
   createEnvironment() {
     const theme = this.currentConfig.theme;
 
-    // 1. Terrain Ground Mesh
-    const groundGeom = new THREE.PlaneGeometry(1800, 1800, 32, 32);
+    // 1. Terrain Ground Mesh (always at y = -0.3, under all road points)
+    const groundGeom = new THREE.PlaneGeometry(2000, 2000, 32, 32);
     groundGeom.rotateX(-Math.PI / 2);
     const groundMat = new THREE.MeshLambertMaterial({
       color: this.currentConfig.groundColor,
       flatShading: true
     });
     const ground = new THREE.Mesh(groundGeom, groundMat);
-    ground.position.y = -0.3;
+    ground.position.y = -0.35;
     ground.receiveShadow = true;
     this.trackGroup.add(ground);
 
@@ -496,8 +493,8 @@ export class CircuitTrack {
 
   createCyberCityEnvironment() {
     // Futuristic low-poly skyscrapers
-    const buildingColors = [0x121420, 0x1a1e2e, 0x252a3d, 0x11131a];
-    const neonColors = [0x00d2d3, 0xff007f, 0xffd32a, 0x3c40c6];
+    const buildingColors = [0x1d2238, 0x252c48, 0x2f375c, 0x1a1e30];
+    const neonColors = [0x00f0ff, 0xff007f, 0xffe600, 0x7928ca];
 
     for (let i = 0; i < 90; i++) {
       const u = Math.random();
@@ -512,7 +509,7 @@ export class CircuitTrack {
 
       const w = 15 + Math.random() * 25;
       const d = 15 + Math.random() * 25;
-      const h = 40 + Math.random() * 120;
+      const h = 40 + Math.random() * 110;
 
       const bGeom = new THREE.BoxGeometry(w, h, d);
       const bMat = new THREE.MeshLambertMaterial({
@@ -523,8 +520,8 @@ export class CircuitTrack {
       building.position.set(pos.x, h / 2, pos.z);
       this.trackGroup.add(building);
 
-      // Neon rooftop spire or billboard
-      if (Math.random() > 0.4) {
+      // Neon rooftop spire / billboard
+      if (Math.random() > 0.35) {
         const beaconGeom = new THREE.BoxGeometry(w * 0.7, 3, 2);
         const beaconMat = new THREE.MeshBasicMaterial({
           color: neonColors[Math.floor(Math.random() * neonColors.length)]
@@ -605,7 +602,7 @@ export class CircuitTrack {
     const leafMat = new THREE.MeshLambertMaterial({ color: color1, flatShading: true });
     const palmMat = new THREE.MeshLambertMaterial({ color: color2, flatShading: true });
 
-    const numTrees = 200;
+    const numTrees = 180;
     const up = new THREE.Vector3(0, 1, 0);
 
     for (let i = 0; i < numTrees; i++) {

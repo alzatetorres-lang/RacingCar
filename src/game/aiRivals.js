@@ -200,11 +200,12 @@ export class AIRivalManager {
     this.rivals.forEach(r => {
       const dist = playerPos.distanceTo(r.mesh.position);
       if (dist < minCarDist) {
-        // Elastic lateral bump between cars
-        const deltaOffset = player.lateralOffset - r.lineOffset;
-        const pushDir = deltaOffset >= 0 ? 1 : -1;
-        player.lateralOffset += pushDir * 0.45;
-        r.lineOffset -= pushDir * 0.35;
+        // Elastic 3D bump between cars
+        const pushDir = new THREE.Vector3().subVectors(playerPos, r.mesh.position).normalize();
+        pushDir.y = 0;
+
+        player.mesh.position.addScaledVector(pushDir, 0.25);
+        r.mesh.position.addScaledVector(pushDir, -0.25);
 
         // Arcade speed impact
         player.speedKmh *= 0.94;

@@ -126,17 +126,21 @@ class ApexRacingGame {
     this.sunLight.shadow.camera.bottom = -d;
     this.scene.add(this.sunLight);
 
-    // Skybox: Panoramic Sunset Cylinder
+    // Skybox: Panoramic Cylinder
     const skyGeom = new THREE.CylinderGeometry(900, 900, 450, 32, 1, true);
     skyGeom.scale(-1, 1, 1);
+    this.skyMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    this.skyMesh = new THREE.Mesh(skyGeom, this.skyMat);
+    this.skyMesh.position.y = 80;
+    this.scene.add(this.skyMesh);
+
     const textureLoader = new THREE.TextureLoader();
     textureLoader.load('/assets/images/skybox-sunset.jpg', tex => {
       tex.wrapS = THREE.RepeatWrapping;
       tex.repeat.set(2, 1);
-      const skyMat = new THREE.MeshBasicMaterial({ map: tex });
-      const sky = new THREE.Mesh(skyGeom, skyMat);
-      sky.position.y = 80;
-      this.scene.add(sky);
+      this.skyTexture = tex;
+      this.skyMat.map = tex;
+      this.skyMat.needsUpdate = true;
     });
 
     // Giant Flat Low-Poly Sun on Horizon
@@ -158,8 +162,9 @@ class ApexRacingGame {
     this.player.setTrack(this.track);
     this.rivals.setTrack(this.track);
     this.minimap.updateTrack(this.track);
+    this.cameraManager.snapToTarget(this.player);
 
-    // Update scene fog and lighting
+    // Update scene fog and atmospheric lighting
     if (this.scene && this.scene.fog) {
       this.scene.fog.color.setHex(cfg.fogColor);
       this.scene.fog.density = cfg.fogDensity;
@@ -167,9 +172,35 @@ class ApexRacingGame {
     if (this.sunLight) {
       this.sunLight.color.setHex(cfg.sunColor);
       this.sunLight.position.set(...cfg.sunPosition);
+      this.sunLight.intensity = cfg.id === 'cyber_city' ? 1.8 : 1.6;
+    }
+    if (this.ambientLight) {
+      if (cfg.id === 'cyber_city') {
+        this.ambientLight.color.setHex(0x58248c);
+        this.ambientLight.intensity = 1.4;
+      } else if (cfg.id === 'desert_canyon') {
+        this.ambientLight.color.setHex(0xd97736);
+        this.ambientLight.intensity = 1.2;
+      } else if (cfg.id === 'frost_summit') {
+        this.ambientLight.color.setHex(0x98b8d8);
+        this.ambientLight.intensity = 1.3;
+      } else {
+        this.ambientLight.color.setHex(0xffb088);
+        this.ambientLight.intensity = 0.85;
+      }
     }
     if (this.sunMesh) {
       this.sunMesh.material.color.setHex(cfg.sunColor);
+    }
+    if (this.skyMat) {
+      if (cfg.id === 'sunset_coast' && this.skyTexture) {
+        this.skyMat.map = this.skyTexture;
+        this.skyMat.color.setHex(0xffffff);
+      } else {
+        this.skyMat.map = null;
+        this.skyMat.color.setHex(cfg.skyColor);
+      }
+      this.skyMat.needsUpdate = true;
     }
 
     // Update UI elements
@@ -298,6 +329,7 @@ class ApexRacingGame {
   startCountdown() {
     this.player.resetToStart(7);
     this.rivals.resetGrid();
+    this.cameraManager.snapToTarget(this.player);
     this.countdownStage = 3;
     this.countdownTimer = 0;
     this.track.setTrafficLight(1);

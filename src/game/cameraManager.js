@@ -8,8 +8,8 @@ export class CameraManager {
     this.modeIndex = 0;
 
     // Smoothed target tracking
-    this.currentPos = new THREE.Vector3();
-    this.currentLookAt = new THREE.Vector3();
+    this.currentPos = new THREE.Vector3(0, 5, -10);
+    this.currentLookAt = new THREE.Vector3(0, 1, 0);
   }
 
   setMode(mode) {
@@ -25,10 +25,25 @@ export class CameraManager {
     return this.mode;
   }
 
-  update(playerVehicle, dt) {
+  snapToTarget(playerVehicle) {
+    if (!playerVehicle || !playerVehicle.mesh) return;
     const carPos = playerVehicle.mesh.position;
-    const heading = playerVehicle.heading;
-    const isDrifting = playerVehicle.isDrifting;
+    const heading = playerVehicle.heading || 0;
+    const forwardDir = new THREE.Vector3(-Math.sin(heading), 0, -Math.cos(heading));
+
+    this.currentPos.copy(carPos).addScaledVector(forwardDir, -7.2).add(new THREE.Vector3(0, 2.6, 0));
+    this.currentLookAt.copy(carPos).add(new THREE.Vector3(0, 1.2, 0));
+
+    this.camera.position.copy(this.currentPos);
+    this.camera.lookAt(this.currentLookAt);
+  }
+
+  update(playerVehicle, dt) {
+    if (!playerVehicle || !playerVehicle.mesh) return;
+
+    const carPos = playerVehicle.mesh.position;
+    const heading = playerVehicle.heading || 0;
+    const isDrifting = Boolean(playerVehicle.isDrifting);
 
     const forwardDir = new THREE.Vector3(
       -Math.sin(heading),
@@ -44,19 +59,22 @@ export class CameraManager {
     let targetCamPos = new THREE.Vector3();
     let targetLookAt = new THREE.Vector3();
 
+    const speed = Math.abs(playerVehicle.speedKmh || 0);
+
     if (this.mode === 'chase') {
       // Third person low rear view (FOV 65)
       this.camera.fov = 65;
-      const camDist = 6.8 + (playerVehicle.speedKmh / 235) * 1.5;
+      const camDist = 6.8 + (speed / 235) * 1.5;
       const camHeight = 2.4;
 
       targetCamPos.copy(carPos)
         .addScaledVector(forwardDir, -camDist)
         .add(new THREE.Vector3(0, camHeight, 0));
 
-      // Drift dynamic offset
+      // Drift dynamic offset (safe calculation, never NaN)
       if (isDrifting) {
-        targetCamPos.addScaledVector(sideDir, playerVehicle.lateralVelocity * 0.04);
+        const slide = Number(playerVehicle.lateralSlide) || 0;
+        targetCamPos.addScaledVector(sideDir, slide * 0.04);
       }
 
       targetLookAt.copy(carPos).add(new THREE.Vector3(0, 1.2, 0)).addScaledVector(forwardDir, 5.0);
@@ -75,6 +93,14 @@ export class CameraManager {
         .add(new THREE.Vector3(0, 1.5, 0));
 
       targetLookAt.copy(carPos).add(new THREE.Vector3(0, 0.9, 0));
+    }
+
+    // Guard against NaN
+    if (isNaN(targetCamPos.x) || isNaN(targetCamPos.y) || isNaN(targetCamPos.z)) {
+      return;
+    }
+    if (isNaN(targetLookAt.x) || isNaN(targetLookAt.y) || isNaN(targetLookAt.z)) {
+      return;
     }
 
     // Smooth camera lag
