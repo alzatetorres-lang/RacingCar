@@ -3,11 +3,11 @@ import * as THREE from 'three';
 export const TRACK_CONFIGS = [
   {
     id: 'sunset_coast',
-    name: 'EMERALD GROVE & SUNSET COAST',
-    shortName: 'EMERALD GROVE',
+    name: 'EMERALD GROVE & METRO COAST',
+    shortName: 'METRO COAST',
     theme: 'sunset',
     difficulty: 'NORMAL',
-    desc: 'Atardecer costero con curvas abiertas en S, palmeras y frondosos pinares.',
+    desc: 'Circuito costero con puente colgante sobre el océano, salto de cresta, túnel de montaña y travesía por el centro urbano.',
     trackWidth: 18,
     roadColor: 0x333538,
     kerbColors: [0xc81d25, 0xffffff], // Red & White
@@ -18,22 +18,28 @@ export const TRACK_CONFIGS = [
     skyColor: 0x5a3b76,
     sunColor: 0xffd580,
     sunPosition: [-200, 120, -300],
+    features: {
+      bridge: { startU: 0.12, endU: 0.28, color: 0xc81d25 },
+      jump: { u: 0.38, launchVel: 12.0 },
+      tunnel: { startU: 0.52, endU: 0.68, lightColor: 0x00ff88 },
+      city: { startU: 0.78, endU: 0.96 }
+    },
     points: [
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(0, 0, 160),
-      new THREE.Vector3(50, 4, 300),
-      new THREE.Vector3(140, 8, 420),
-      new THREE.Vector3(260, 12, 450),
-      new THREE.Vector3(380, 16, 380),
-      new THREE.Vector3(450, 20, 250),
-      new THREE.Vector3(390, 18, 120),
-      new THREE.Vector3(470, 16, 0),
-      new THREE.Vector3(480, 12, -140),
-      new THREE.Vector3(400, 8, -280),
-      new THREE.Vector3(260, 4, -350),
-      new THREE.Vector3(120, 2, -320),
-      new THREE.Vector3(-40, 0, -220),
-      new THREE.Vector3(-60, 0, -90)
+      new THREE.Vector3(0, 0, 0),         // Start Line
+      new THREE.Vector3(0, 0, 160),       // Main straightaway
+      new THREE.Vector3(50, 4, 300),      // Bridge approach
+      new THREE.Vector3(140, 8, 420),     // Ocean Bridge Span
+      new THREE.Vector3(260, 10, 450),    // Bridge exit
+      new THREE.Vector3(380, 18, 380),    // Climb to jump ramp
+      new THREE.Vector3(450, 14, 250),    // Jump crest launch & landing
+      new THREE.Vector3(390, 16, 120),    // Mountain Ridge
+      new THREE.Vector3(470, 16, 0),      // Tunnel Entry
+      new THREE.Vector3(480, 12, -140),   // Tunnel interior
+      new THREE.Vector3(400, 8, -280),    // Tunnel Exit / Hairpin
+      new THREE.Vector3(260, 4, -350),    // Descent into City
+      new THREE.Vector3(120, 2, -320),    // Downtown Boulevard
+      new THREE.Vector3(-40, 0, -220),    // City Square Curves
+      new THREE.Vector3(-60, 0, -90)      // Final straight entrance
     ]
   },
   {
@@ -42,7 +48,7 @@ export const TRACK_CONFIGS = [
     shortName: 'CYBER CITY',
     theme: 'cyber',
     difficulty: 'HARD',
-    desc: 'Autopista nocturna con rascacielos iluminados, bordillos neón y curvas técnicas.',
+    desc: 'Metrópolis futurista con viaducto elevado, túnel cibernético hexagonal, rascacielos iluminados y rampa de salto.',
     trackWidth: 20,
     roadColor: 0x24283b,
     kerbColors: [0x00f0ff, 0xff007f], // Cyan & Electric Magenta
@@ -51,21 +57,27 @@ export const TRACK_CONFIGS = [
     fogColor: 0x241147,
     fogDensity: 0.0010,
     skyColor: 0x1b0838,
-    sunColor: 0x00f0ff, // Bright electric moonlight
+    sunColor: 0x00f0ff,
     sunPosition: [100, 160, -350],
+    features: {
+      bridge: { startU: 0.08, endU: 0.25, color: 0x00f0ff },
+      jump: { u: 0.45, launchVel: 14.0 },
+      tunnel: { startU: 0.60, endU: 0.78, lightColor: 0xff007f },
+      city: { startU: 0.0, endU: 1.0 } // Entire track in the city!
+    },
     points: [
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(0, 0, 200),
-      new THREE.Vector3(-80, 4, 360),
-      new THREE.Vector3(-220, 8, 420),
-      new THREE.Vector3(-380, 10, 340),
-      new THREE.Vector3(-420, 8, 160),
-      new THREE.Vector3(-320, 5, 0),
-      new THREE.Vector3(-240, 8, -160),
-      new THREE.Vector3(-140, 12, -320),
-      new THREE.Vector3(60, 8, -400),
-      new THREE.Vector3(220, 5, -320),
-      new THREE.Vector3(260, 2, -140),
+      new THREE.Vector3(-80, 5, 360),
+      new THREE.Vector3(-220, 9, 420),
+      new THREE.Vector3(-380, 12, 340),
+      new THREE.Vector3(-420, 14, 160),
+      new THREE.Vector3(-320, 8, 0),
+      new THREE.Vector3(-240, 10, -160),
+      new THREE.Vector3(-140, 14, -320),
+      new THREE.Vector3(60, 10, -400),
+      new THREE.Vector3(220, 6, -320),
+      new THREE.Vector3(260, 3, -140),
       new THREE.Vector3(180, 0, -40)
     ]
   },
@@ -75,29 +87,35 @@ export const TRACK_CONFIGS = [
     shortName: 'MOJAVE CANYON',
     theme: 'desert',
     difficulty: 'FAST',
-    desc: 'Pista rápida entre cañones de arenisca roja, mesetas y sol radiante.',
+    desc: 'Cañón de arenisca roja con puente sobre el desfiladero, túnel tallado en la roca y rampa de duna.',
     trackWidth: 19,
     roadColor: 0x483e35,
     kerbColors: [0xffb703, 0x222222], // Amber & Dark Grey
     centerLineColor: 0xffd166,
-    groundColor: 0xc87d3b, // Sandstone ochre
+    groundColor: 0xc87d3b,
     fogColor: 0xc87d3b,
     fogDensity: 0.0010,
     skyColor: 0xe67e22,
     sunColor: 0xffe066,
     sunPosition: [-350, 140, -250],
+    features: {
+      bridge: { startU: 0.20, endU: 0.35, color: 0xd97736 },
+      jump: { u: 0.50, launchVel: 13.0 },
+      tunnel: { startU: 0.65, endU: 0.82, lightColor: 0xffb703 },
+      city: { startU: 0.88, endU: 0.98 }
+    },
     points: [
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(0, 0, 240),
-      new THREE.Vector3(120, 2, 400),
-      new THREE.Vector3(280, 4, 480),
-      new THREE.Vector3(440, 8, 420),
-      new THREE.Vector3(520, 14, 260),
+      new THREE.Vector3(120, 3, 400),
+      new THREE.Vector3(280, 6, 480),
+      new THREE.Vector3(440, 10, 420),
+      new THREE.Vector3(520, 16, 260),
       new THREE.Vector3(420, 12, 100),
       new THREE.Vector3(340, 8, -60),
-      new THREE.Vector3(420, 5, -220),
-      new THREE.Vector3(360, 2, -380),
-      new THREE.Vector3(180, 1, -440),
+      new THREE.Vector3(420, 6, -220),
+      new THREE.Vector3(360, 3, -380),
+      new THREE.Vector3(180, 2, -440),
       new THREE.Vector3(20, 0, -340),
       new THREE.Vector3(-60, 0, -180)
     ]
@@ -108,17 +126,23 @@ export const TRACK_CONFIGS = [
     shortName: 'FROST SUMMIT',
     theme: 'snow',
     difficulty: 'EXPERT',
-    desc: 'Paso montañoso nevado con horquillas cerradas, bordillos gélidos y picos nevados.',
+    desc: 'Cumbre alpina con túnel de hielo, puente sobre abismo helado y salto acrobático.',
     trackWidth: 18,
     roadColor: 0x2d3445,
     kerbColors: [0x48cae4, 0xffffff], // Ice Blue & Snow White
     centerLineColor: 0xffffff,
-    groundColor: 0xdde5ed, // Snow white
+    groundColor: 0xdde5ed,
     fogColor: 0x5b7288,
     fogDensity: 0.0010,
     skyColor: 0x34495e,
     sunColor: 0xffffff,
     sunPosition: [-250, 150, 280],
+    features: {
+      bridge: { startU: 0.18, endU: 0.32, color: 0x48cae4 },
+      jump: { u: 0.44, launchVel: 15.0 },
+      tunnel: { startU: 0.62, endU: 0.76, lightColor: 0x70d6ff },
+      city: { startU: 0.85, endU: 0.97 }
+    },
     points: [
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(0, 2, 180),
@@ -146,7 +170,7 @@ export class CircuitTrack {
     this.totalLength = 0;
     this.checkpoints = [];
 
-    // Scene group for this track
+    // Scene group for all track meshes
     this.trackGroup = new THREE.Group();
     this.scene.add(this.trackGroup);
 
@@ -160,7 +184,7 @@ export class CircuitTrack {
     this.currentConfig = cfg;
     this.trackWidth = cfg.trackWidth;
 
-    // Cleanly clear trackGroup without disposing shared materials
+    // Dispose old geometries cleanly
     this.trackGroup.traverse(child => {
       if (child.isMesh && child.geometry) {
         child.geometry.dispose();
@@ -178,6 +202,7 @@ export class CircuitTrack {
     this.createKerbsAndMarkings();
     this.createStartFinishArch();
     this.createEnvironment();
+    this.createTrackSpecialFeatures();
   }
 
   createSpline() {
@@ -396,7 +421,7 @@ export class CircuitTrack {
     sign.position.set(0, postH - 0.8, -0.62);
     archGroup.add(sign);
 
-    // Gantry traffic lights
+    // Traffic lights
     const lightFrame = new THREE.Mesh(new THREE.BoxGeometry(4.2, 1.2, 0.4), postMat);
     lightFrame.position.set(0, postH - 2.0, 0);
     archGroup.add(lightFrame);
@@ -435,10 +460,278 @@ export class CircuitTrack {
     });
   }
 
+  // ==========================================
+  // SPECIAL FEATURES: TUNNELS, BRIDGES, JUMPS & CITY
+  // ==========================================
+  createTrackSpecialFeatures() {
+    const f = this.currentConfig.features;
+    if (!f) return;
+
+    if (f.bridge) this.buildBridge(f.bridge.startU, f.bridge.endU, f.bridge.color);
+    if (f.jump) this.buildJumpRamp(f.jump.u);
+    if (f.tunnel) this.buildTunnel(f.tunnel.startU, f.tunnel.endU, f.tunnel.lightColor);
+    if (f.city) this.buildCityDistrict(f.city.startU, f.city.endU);
+  }
+
+  /**
+   * 3D Suspension / Truss Bridge with support pillars and steel beams
+   */
+  buildBridge(startU, endU, bridgeColor = 0xc81d25) {
+    const bridgeGroup = new THREE.Group();
+    const up = new THREE.Vector3(0, 1, 0);
+    const steps = 30;
+    const uSpan = (endU - startU + 1.0) % 1.0;
+    const halfW = (this.trackWidth / 2) + 0.8;
+
+    const steelMat = new THREE.MeshLambertMaterial({ color: bridgeColor, flatShading: true });
+    const darkMat = new THREE.MeshLambertMaterial({ color: 0x1b1c22, flatShading: true });
+    const cableMat = new THREE.MeshBasicMaterial({ color: 0xdddddd });
+
+    // Bridge road barriers and underside pillars
+    for (let i = 0; i <= steps; i++) {
+      const u = (startU + (i / steps) * uSpan) % 1.0;
+      const pt = this.curve.getPointAt(u);
+      const tangent = this.curve.getTangentAt(u);
+      const side = new THREE.Vector3().crossVectors(tangent, up).normalize();
+
+      // Underside concrete pillars down to ground every 5 steps
+      if (i % 6 === 0) {
+        const pillarGeom = new THREE.CylinderGeometry(1.2, 1.5, Math.max(pt.y + 2, 4), 6);
+        const pillar = new THREE.Mesh(pillarGeom, darkMat);
+        pillar.position.set(pt.x, (pt.y - 0.5) / 2, pt.z);
+        bridgeGroup.add(pillar);
+      }
+
+      // Left & Right bridge safety railings / steel trusses
+      [-halfW, halfW].forEach(offset => {
+        const pos = new THREE.Vector3().copy(pt).addScaledVector(side, offset);
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.5, 2.2, 0.5), steelMat);
+        post.position.set(pos.x, pt.y + 1.1, pos.z);
+        bridgeGroup.add(post);
+      });
+    }
+
+    // Suspension Towers at bridge center
+    const midU = (startU + uSpan * 0.5) % 1.0;
+    const midPt = this.curve.getPointAt(midU);
+    const midTangent = this.curve.getTangentAt(midU);
+    const midSide = new THREE.Vector3().crossVectors(midTangent, up).normalize();
+
+    [-halfW - 0.5, halfW + 0.5].forEach(offset => {
+      const towerBase = new THREE.Vector3().copy(midPt).addScaledVector(midSide, offset);
+      const tower = new THREE.Mesh(new THREE.BoxGeometry(1.6, 26, 1.6), steelMat);
+      tower.position.set(towerBase.x, midPt.y + 13, towerBase.z);
+      bridgeGroup.add(tower);
+
+      // Suspension cable lines
+      const cableGeom = new THREE.CylinderGeometry(0.08, 0.08, 35, 4);
+      cableGeom.rotateZ(Math.PI / 4);
+      const cable = new THREE.Mesh(cableGeom, cableMat);
+      cable.position.set(towerBase.x, midPt.y + 12, towerBase.z);
+      bridgeGroup.add(cable);
+    });
+
+    this.trackGroup.add(bridgeGroup);
+  }
+
+  /**
+   * 3D Jump Ramp with launch markers and airborne crest
+   */
+  buildJumpRamp(u) {
+    const pt = this.curve.getPointAt(u);
+    const tangent = this.curve.getTangentAt(u);
+    const up = new THREE.Vector3(0, 1, 0);
+
+    const rampGroup = new THREE.Group();
+    rampGroup.position.copy(pt);
+    rampGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), tangent);
+
+    // Hazard ramp wedge
+    const rampGeom = new THREE.BoxGeometry(this.trackWidth * 0.9, 1.4, 12);
+    rampGeom.rotateX(0.12);
+
+    const rampMat = new THREE.MeshLambertMaterial({
+      color: 0xffcc00,
+      flatShading: true
+    });
+    const ramp = new THREE.Mesh(rampGeom, rampMat);
+    ramp.position.set(0, 0.45, 0);
+    rampGroup.add(ramp);
+
+    // Chevron hazard signs on sides
+    [-this.trackWidth / 2 - 0.5, this.trackWidth / 2 + 0.5].forEach(x => {
+      const sign = new THREE.Mesh(
+        new THREE.BoxGeometry(0.4, 3.5, 3.5),
+        new THREE.MeshBasicMaterial({ color: 0xff2222 })
+      );
+      sign.position.set(x, 1.8, 0);
+      rampGroup.add(sign);
+    });
+
+    this.trackGroup.add(rampGroup);
+  }
+
+  /**
+   * 3D Mountain / Cyber Tunnel with arched entrance and neon ceiling ribs
+   */
+  buildTunnel(startU, endU, neonColor = 0x00ff88) {
+    const tunnelGroup = new THREE.Group();
+    const up = new THREE.Vector3(0, 1, 0);
+    const steps = 35;
+    const uSpan = (endU - startU + 1.0) % 1.0;
+    const span = this.trackWidth + 3.5;
+    const tunnelH = 8.5;
+
+    const concreteMat = new THREE.MeshLambertMaterial({ color: 0x1f232b, flatShading: true });
+    const neonMat = new THREE.MeshBasicMaterial({ color: neonColor });
+
+    // Portal entrance & exit arches
+    [startU, endU].forEach(u => {
+      const pt = this.curve.getPointAt(u);
+      const tangent = this.curve.getTangentAt(u);
+
+      const portal = new THREE.Group();
+      portal.position.copy(pt);
+      portal.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), tangent);
+
+      const archL = new THREE.Mesh(new THREE.BoxGeometry(1.8, tunnelH, 2.5), concreteMat);
+      archL.position.set(-span / 2, tunnelH / 2, 0);
+      portal.add(archL);
+
+      const archR = new THREE.Mesh(new THREE.BoxGeometry(1.8, tunnelH, 2.5), concreteMat);
+      archR.position.set(span / 2, tunnelH / 2, 0);
+      portal.add(archR);
+
+      const archTop = new THREE.Mesh(new THREE.BoxGeometry(span + 2, 2.2, 2.5), concreteMat);
+      archTop.position.set(0, tunnelH, 0);
+      portal.add(archTop);
+
+      // Neon sign on portal
+      const sign = new THREE.Mesh(new THREE.BoxGeometry(span * 0.7, 1.2, 0.4), neonMat);
+      sign.position.set(0, tunnelH - 0.2, 1.3);
+      portal.add(sign);
+
+      tunnelGroup.add(portal);
+    });
+
+    // Rib arches along the tunnel
+    for (let i = 1; i < steps; i++) {
+      const u = (startU + (i / steps) * uSpan) % 1.0;
+      const pt = this.curve.getPointAt(u);
+      const tangent = this.curve.getTangentAt(u);
+
+      const rib = new THREE.Group();
+      rib.position.copy(pt);
+      rib.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), tangent);
+
+      // Left & Right walls
+      const wallL = new THREE.Mesh(new THREE.BoxGeometry(1.2, tunnelH, 1.2), concreteMat);
+      wallL.position.set(-span / 2, tunnelH / 2, 0);
+      rib.add(wallL);
+
+      const wallR = new THREE.Mesh(new THREE.BoxGeometry(1.2, tunnelH, 1.2), concreteMat);
+      wallR.position.set(span / 2, tunnelH / 2, 0);
+      rib.add(wallR);
+
+      // Roof beam
+      const roof = new THREE.Mesh(new THREE.BoxGeometry(span, 1.2, 1.2), concreteMat);
+      roof.position.set(0, tunnelH, 0);
+      rib.add(roof);
+
+      // Glowing ceiling neon strip
+      const strip = new THREE.Mesh(new THREE.BoxGeometry(span * 0.5, 0.3, 0.8), neonMat);
+      strip.position.set(0, tunnelH - 0.5, 0);
+      rib.add(strip);
+
+      tunnelGroup.add(rib);
+    }
+
+    this.trackGroup.add(tunnelGroup);
+  }
+
+  /**
+   * Downtown City District with dense skyscrapers and overhead gantries
+   */
+  buildCityDistrict(startU, endU) {
+    const cityGroup = new THREE.Group();
+    const up = new THREE.Vector3(0, 1, 0);
+    const steps = 24;
+    const uSpan = (endU - startU + 1.0) % 1.0;
+
+    const buildingColors = [0x1c2333, 0x222a3f, 0x2b344e, 0x181e2b];
+    const neonColors = [0x00f0ff, 0xff007f, 0xffe600, 0x00ff66];
+
+    for (let i = 0; i <= steps; i++) {
+      const u = (startU + (i / steps) * uSpan) % 1.0;
+      const pt = this.curve.getPointAt(u);
+      const tangent = this.curve.getTangentAt(u);
+      const side = new THREE.Vector3().crossVectors(tangent, up).normalize();
+
+      // Buildings on both sides, closer to road curbs
+      [-1, 1].forEach(dir => {
+        const dist = (this.trackWidth / 2) + 6 + Math.random() * 25;
+        const pos = new THREE.Vector3().copy(pt).addScaledVector(side, dir * dist);
+
+        const w = 18 + Math.random() * 20;
+        const d = 18 + Math.random() * 20;
+        const h = 50 + Math.random() * 110;
+
+        const bGeom = new THREE.BoxGeometry(w, h, d);
+        const bMat = new THREE.MeshLambertMaterial({
+          color: buildingColors[Math.floor(Math.random() * buildingColors.length)],
+          flatShading: true
+        });
+        const building = new THREE.Mesh(bGeom, bMat);
+        building.position.set(pos.x, h / 2, pos.z);
+        cityGroup.add(building);
+
+        // Lit rooftop neon sign
+        if (Math.random() > 0.4) {
+          const signGeom = new THREE.BoxGeometry(w * 0.75, 4, 2);
+          const signMat = new THREE.MeshBasicMaterial({
+            color: neonColors[Math.floor(Math.random() * neonColors.length)]
+          });
+          const sign = new THREE.Mesh(signGeom, signMat);
+          sign.position.set(pos.x, h + 2, pos.z);
+          cityGroup.add(sign);
+        }
+      });
+
+      // Overhead highway billboard gantry every 8 steps
+      if (i % 8 === 0) {
+        const gantry = new THREE.Group();
+        gantry.position.copy(pt);
+        gantry.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), tangent);
+
+        const postH = 8.5;
+        const span = this.trackWidth + 3;
+
+        const postL = new THREE.Mesh(new THREE.BoxGeometry(0.8, postH, 0.8), new THREE.MeshLambertMaterial({ color: 0x22252a }));
+        postL.position.set(-span / 2, postH / 2, 0);
+        gantry.add(postL);
+
+        const postR = new THREE.Mesh(new THREE.BoxGeometry(0.8, postH, 0.8), new THREE.MeshLambertMaterial({ color: 0x22252a }));
+        postR.position.set(span / 2, postH / 2, 0);
+        gantry.add(postR);
+
+        const board = new THREE.Mesh(
+          new THREE.BoxGeometry(span, 2.2, 0.8),
+          new THREE.MeshBasicMaterial({ color: 0x00d2d3 })
+        );
+        board.position.set(0, postH - 0.5, 0);
+        gantry.add(board);
+
+        cityGroup.add(gantry);
+      }
+    }
+
+    this.trackGroup.add(cityGroup);
+  }
+
   createEnvironment() {
     const theme = this.currentConfig.theme;
 
-    // 1. Terrain Ground Mesh (always at y = -0.3, under all road points)
+    // Terrain Ground Mesh (always at y = -0.35, under all road points)
     const groundGeom = new THREE.PlaneGeometry(2000, 2000, 32, 32);
     groundGeom.rotateX(-Math.PI / 2);
     const groundMat = new THREE.MeshLambertMaterial({
@@ -450,7 +743,6 @@ export class CircuitTrack {
     ground.receiveShadow = true;
     this.trackGroup.add(ground);
 
-    // 2. Theme-Specific Props
     if (theme === 'sunset') {
       this.createSunsetEnvironment();
     } else if (theme === 'cyber') {
@@ -463,7 +755,6 @@ export class CircuitTrack {
   }
 
   createSunsetEnvironment() {
-    // Ocean on the left
     const oceanGeom = new THREE.PlaneGeometry(900, 1800, 24, 24);
     oceanGeom.rotateX(-Math.PI / 2);
     const oceanMat = new THREE.MeshLambertMaterial({
@@ -476,7 +767,6 @@ export class CircuitTrack {
     ocean.position.set(-450, -1.2, 0);
     this.trackGroup.add(ocean);
 
-    // Mountains
     const mGeom = new THREE.ConeGeometry(70, 140, 5);
     const mMat = new THREE.MeshLambertMaterial({ color: 0x3d2645, flatShading: true });
     for (let i = 0; i < 20; i++) {
@@ -487,54 +777,14 @@ export class CircuitTrack {
       this.trackGroup.add(m);
     }
 
-    // Trees
     this.scatterTrees(0x1b4332, 0x2d6a4f, true);
   }
 
   createCyberCityEnvironment() {
-    // Futuristic low-poly skyscrapers
-    const buildingColors = [0x1d2238, 0x252c48, 0x2f375c, 0x1a1e30];
-    const neonColors = [0x00f0ff, 0xff007f, 0xffe600, 0x7928ca];
-
-    for (let i = 0; i < 90; i++) {
-      const u = Math.random();
-      const pt = this.curve.getPointAt(u);
-      const tangent = this.curve.getTangentAt(u);
-      const up = new THREE.Vector3(0, 1, 0);
-      const side = new THREE.Vector3().crossVectors(tangent, up).normalize();
-
-      const offsetDist = (this.trackWidth / 2) + 12 + Math.random() * 80;
-      const isLeft = Math.random() > 0.5;
-      const pos = new THREE.Vector3().copy(pt).addScaledVector(side, isLeft ? -offsetDist : offsetDist);
-
-      const w = 15 + Math.random() * 25;
-      const d = 15 + Math.random() * 25;
-      const h = 40 + Math.random() * 110;
-
-      const bGeom = new THREE.BoxGeometry(w, h, d);
-      const bMat = new THREE.MeshLambertMaterial({
-        color: buildingColors[Math.floor(Math.random() * buildingColors.length)],
-        flatShading: true
-      });
-      const building = new THREE.Mesh(bGeom, bMat);
-      building.position.set(pos.x, h / 2, pos.z);
-      this.trackGroup.add(building);
-
-      // Neon rooftop spire / billboard
-      if (Math.random() > 0.35) {
-        const beaconGeom = new THREE.BoxGeometry(w * 0.7, 3, 2);
-        const beaconMat = new THREE.MeshBasicMaterial({
-          color: neonColors[Math.floor(Math.random() * neonColors.length)]
-        });
-        const beacon = new THREE.Mesh(beaconGeom, beaconMat);
-        beacon.position.set(pos.x, h + 1.5, pos.z);
-        this.trackGroup.add(beacon);
-      }
-    }
+    // Cyber City skyscrapers already populated by features.city!
   }
 
   createDesertEnvironment() {
-    // Sandstone Buttes & Cacti
     const butteGeom = new THREE.CylinderGeometry(20, 45, 60, 6);
     const butteMat = new THREE.MeshLambertMaterial({ color: 0x934b1e, flatShading: true });
 
@@ -556,7 +806,6 @@ export class CircuitTrack {
       this.trackGroup.add(b);
     }
 
-    // Cacti
     const cactusMat = new THREE.MeshLambertMaterial({ color: 0x386641, flatShading: true });
     const stemGeom = new THREE.CylinderGeometry(0.4, 0.5, 7, 6);
     for (let i = 0; i < 110; i++) {
@@ -576,7 +825,6 @@ export class CircuitTrack {
   }
 
   createSnowEnvironment() {
-    // Snowy mountains
     const peakGeom = new THREE.ConeGeometry(80, 160, 5);
     const peakMat = new THREE.MeshLambertMaterial({ color: 0xe0e6ed, flatShading: true });
 
@@ -588,7 +836,6 @@ export class CircuitTrack {
       this.trackGroup.add(p);
     }
 
-    // Snow covered pine trees
     this.scatterTrees(0xedf2f4, 0x8d99ae, false);
   }
 
