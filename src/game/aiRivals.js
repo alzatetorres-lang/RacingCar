@@ -55,6 +55,11 @@ export class AIRivalManager {
     this.resetGrid();
   }
 
+  setTrack(newTrack) {
+    this.track = newTrack;
+    this.resetGrid();
+  }
+
   resetGrid() {
     // Rivals take grid positions 1 through 7 (indices 0 to 6)
     this.rivals.forEach((r, idx) => {
@@ -190,20 +195,19 @@ export class AIRivalManager {
 
   handleCollisions(player) {
     const playerPos = player.mesh.position;
-    const minCarDist = 2.4;
+    const minCarDist = 2.6;
 
     this.rivals.forEach(r => {
       const dist = playerPos.distanceTo(r.mesh.position);
       if (dist < minCarDist) {
-        // Simple arcade elastic nudge
-        const pushDir = new THREE.Vector3().subVectors(playerPos, r.mesh.position).normalize();
-        pushDir.y = 0;
+        // Elastic lateral bump between cars
+        const deltaOffset = player.lateralOffset - r.lineOffset;
+        const pushDir = deltaOffset >= 0 ? 1 : -1;
+        player.lateralOffset += pushDir * 0.45;
+        r.lineOffset -= pushDir * 0.35;
 
-        player.mesh.position.addScaledVector(pushDir, 0.15);
-        r.mesh.position.addScaledVector(pushDir, -0.15);
-
-        // Speed impact
-        player.speedKmh *= 0.92;
+        // Arcade speed impact
+        player.speedKmh *= 0.94;
         r.speedKmh *= 0.95;
       }
     });

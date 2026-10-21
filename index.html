@@ -69,14 +69,21 @@
           </div>
         </div>
 
-        <!-- Circuit Information -->
-        <div class="panel-retro">
+        <!-- Circuit Information & Selector -->
+        <div class="panel-retro" style="flex: 1 1 380px;">
           <h2>CIRCUIT SELECT</h2>
-          <div style="font-size: 13px; color: #fff; margin-bottom: 6px;">EMERALD GROVE & SUNSET COAST</div>
-          <div class="track-preview-box">
-            <img src="/assets/images/track-preview.jpg" alt="Emerald Grove Circuit">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <button class="arcade-btn secondary" id="btn-prev-track" style="padding: 8px 14px; font-size: 11px;">◀ PREV</button>
+            <span id="track-number-badge" style="font-size: 11px; color: var(--arcade-yellow);">CIRCUIT 1 / 4</span>
+            <button class="arcade-btn secondary" id="btn-next-track" style="padding: 8px 14px; font-size: 11px;">NEXT ▶</button>
           </div>
-          <div style="font-size: 10px; color: #aaa;">LAPS: 3 | RIVALS: 7 | CONDITIONS: SUNSET DRY</div>
+          <div id="track-name-display" style="font-size: 13px; color: #fff; margin-bottom: 6px; font-weight: bold; min-height: 32px; line-height: 1.4;">EMERALD GROVE & SUNSET COAST</div>
+          <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            <span id="track-difficulty-badge" class="league-badge league-gold">NORMAL</span>
+            <span id="track-theme-badge" class="league-badge league-bronze">SUNSET BIOME</span>
+          </div>
+          <div id="track-desc-display" style="font-size: 10px; color: #bbb; line-height: 1.5; margin-bottom: 12px; min-height: 32px;">Atardecer costero con curvas abiertas en S, palmeras y frondosos pinares.</div>
+          <div style="font-size: 10px; color: #888;">LAPS: 3 | RIVALS: 7 | OPTIMIZED FOR DRIFTING</div>
         </div>
 
         <div class="garage-actions">

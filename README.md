@@ -1,35 +1,42 @@
 # 🏎️ Racing Car: Apex 88 (Retro Arcade Racer)
 
-Un videojuego de carreras arcade 3D retro inspirado en clásicos como **Virtua Racing**, **Horizon Chase Turbo** y los arcades poligonales flat-shaded de los años 90 (Sega Model 1), con HUD pixel art de 16-bits, sintetizador de audio retro por Web Audio API y backend conectado con **Supabase** y servidor local de respaldo.
+Un videojuego de carreras arcade 3D retro inspirado en clásicos como **Virtua Racing**, **Horizon Chase Turbo**, **OutRun** y los arcades poligonales flat-shaded de los años 90 (Sega Model 1), con HUD pixel art de 16-bits, sintetizador de audio retro por Web Audio API, físicas de manejo suaves y estables, 4 circuitos dinámicos y backend conectado con **Supabase**, listo para desplegar en **Vercel** o ejecutar en local.
 
 ---
 
 ## 📸 Características Principales
 
-- **Renderizado 3D Low-Poly Flat-Shaded**: Iluminación crepuscular cálida, sombras duras sobre el asfalto y skybox panorámico con sol plano y montañas distantes.
-- **Físicas Arcade y Derrape Asistido**: Conducción ágil con física de derrape en curvas cerradas (`Space` o giro pronunciado) acompañada de partículas de humo pixeladas y chirrido de neumáticos.
-- **Circuitos y Biomas Dinámicos**:
-  - **Tramo 1 (Sunset Coast)**: Océano a la izquierda, palmeras poligonales y bordillos rojo/blanco.
-  - **Tramo 2 (Emerald Grove)**: S-curves a través de colinas verdes y pinos geométricos.
-- **7 Rivales Controlados por IA**: Coches rivales con libreas ochenteras, trazada de carrera personalizada, colisiones arcade elásticas y escalado dinámico de dificultad.
+- **Físicas de Manejo Arcade Mejoradas**:
+  - Control suave y progresivo: se eliminó la sobre-sensibilidad para brindar giros predecibles y estables en rectas y curvas.
+  - Autocentraje suave y guiado por trazada para evitar trompos o desvíos bruscos.
+  - Mecánica de **Derrape Asistido** (`Space` o giro a alta velocidad) con ángulo de slip visible, humo denso pixelado y **Turbo Boost** al salir de la curva.
+  - Penalización suave en césped/arcén sin perder el control del vehículo.
+
+- **4 Circuitos y Entornos Dinámicos**:
+  1. **Emerald Grove & Sunset Coast**: Atardecer crepuscular con océano low-poly, palmeras costeras, colinas verdes y pinos.
+  2. **Neon Cyber City (Tokyo Expressway)**: Autopista nocturna elevada entre rascacielos iluminados, bordillos neón cian/magenta y horizonte cyberpunk.
+  3. **Mojave Desert Canyon**: Cañones de arenisca roja, mesetas, cactus saguaro y rectas de máxima velocidad bajo un cielo dorando.
+  4. **Nordic Frost Summit**: Paso alpino nevado con picos helados, coníferas cubiertas de nieve y bordillos gélidos.
+
+- **7 Rivales Controlados por IA**: Coches rivales con libreas ochenteras, trazada personalizada, colisiones elásticas y escalado de dificultad dinámico según tus victorias.
 - **3 Modos de Cámara**:
-  1. *Chase Cam* (Cámara trasera baja, FOV 65°, balanceo lateral dinámico).
-  2. *Cinematic Aerial* (Vista isométrica/dron para apreciar el trazado).
-  3. *Reverse Front Cam* (Cámara frontal hacia el morro para victorias).
+  1. *Chase Cam* (Cámara trasera baja, FOV 65°, balanceo dinámico).
+  2. *Cinematic Aerial* (Vista isométrica/dron para apreciar el circuito).
+  3. *Reverse Front Cam* (Cámara frontal hacia el morro para el podio de victoria).
 - **HUD Pixel Art Retro ('Press Start 2P')**:
   - Contador de posición dinámico (`POS 8/8`).
   - Contador de vueltas (`LAP 1/3`).
-  - Banner de carrera y cuenta atrás (`3... 2... 1... READY!` -> `★ GO! ★`).
+  - Banner dinámico de carrera y cuenta atrás (`3... 2... 1... READY!` -> `★ GO! ★`).
   - Velocímetro con engranaje pixel art giratorio sincronizado a las RPM.
-  - Minimapa en tiempo real con trazado vectorial y posiciones de los 8 bólidos.
+  - Minimapa en tiempo real adaptativo a cada uno de los 4 circuitos.
 - **Sintetizador de Sonido Retro (Web Audio API)**:
   - Motor con modulación armónica y filtro dinámico según velocidad.
   - Ruido blanco filtrado para derrapes.
   - Beeps de cuenta atrás, campanilla de vuelta y fanfarria de victoria.
-- **Base de Datos y Backend (Supabase + Local Dual-Mode)**:
+- **Base de Datos y Backend (Supabase + Vercel / Local)**:
   - Guarda victorias del piloto y calcula parámetros de dificultad en tiempo real (`aiSpeedMultiplier`, `aiCorneringSkill`, `rubberBandingFactor`).
   - Tabla de posiciones / Hall of Fame con Top 10 pilotos.
-  - Funciona 100% en local con servidor Node/Express y almacén persistente JSON, y se conecta automáticamente a Supabase Cloud al configurar las variables de entorno.
+  - Soporte dual: Supabase Cloud oficial o API Serverless integrada en Vercel / Local.
 
 ---
 
@@ -39,95 +46,50 @@ Un videojuego de carreras arcade 3D retro inspirado en clásicos como **Virtua R
 | :--- | :--- |
 | **W / Flecha Arriba** | Acelerar |
 | **S / Flecha Abajo** | Frenar / Marcha atrás |
-| **A / Flecha Izquierda** | Girar a la izquierda |
-| **D / Flecha Derecha** | Girar a la derecha |
-| **Espacio (Space)** | Freno de mano / Derrape asistido |
+| **A / Flecha Izquierda** | Girar a la izquierda (suave y estable) |
+| **D / Flecha Derecha** | Girar a la derecha (suave y estable) |
+| **Espacio (Space)** | Freno de mano / Derrape asistido + Boost de salida |
 | **C** | Alternar cámara (Chase / Aerial / Front) |
 | **Esc / P** | Menú de Pausa |
-| **Pantalla táctil** | Botones táctiles virtuales en móviles y tablets |
+| **Pantalla táctil** | Controles táctiles virtuales en pantalla para móviles |
+
+---
+
+## 🚀 Despliegue en Vercel
+
+El proyecto está 100% configurado para desplegarse en **Vercel** con un solo clic:
+
+1. Ve a [Vercel](https://vercel.com/) e importa tu repositorio: `https://github.com/alzatetorres-lang/RacingCar.git`.
+2. Vercel detectará automáticamente el archivo `vercel.json` y la configuración de Vite:
+   - **Framework Preset**: Vite
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+3. *(Opcional)* Si quieres conectar con tu base de datos de **Supabase en la nube**:
+   - Agrega las variables de entorno en el panel de Vercel:
+     - `VITE_SUPABASE_URL`: Tu URL de Supabase (`https://xxx.supabase.co`)
+     - `VITE_SUPABASE_ANON_KEY`: Tu clave anónima pública
+4. Haz clic en **Deploy**. La aplicación web y las funciones serverless (`/api/*`) quedarán activas globalmente.
 
 ---
 
 ## 🛠️ Instalación y Ejecución en Local
 
-### 1. Clonar o acceder al proyecto
 ```bash
+# 1. Clonar el repositorio
 git clone https://github.com/alzatetorres-lang/RacingCar.git
 cd RacingCar
-```
 
-### 2. Instalar dependencias
-```bash
+# 2. Instalar dependencias
 npm install
-```
 
-### 3. Ejecutar en local (Frontend + Backend)
-
-Para iniciar ambos servicios a la vez:
-```bash
+# 3. Iniciar juego y backend local
 npm start
 ```
 
-O en terminales separadas:
-```bash
-# Terminal 1: Backend API (Puerto 3001)
-npm run server
-
-# Terminal 2: Frontend Vite (Puerto 5173)
-npm run dev
-```
-
-Abre tu navegador en: **`http://localhost:5173`**
+Abre en tu navegador: **`http://localhost:5173`**
 
 ---
 
-## 🗄️ Configuración de Supabase (Opcional)
+## 🗄️ Esquema de Supabase
 
-Si deseas conectar el juego a tu propio proyecto de **Supabase**:
-
-1. Abre el **SQL Editor** en tu panel de Supabase y ejecuta el contenido de `database/schema.sql`.
-2. Edita tu archivo `.env` en la raíz del proyecto:
-   ```env
-   VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
-   VITE_SUPABASE_ANON_KEY=tu-anon-key-aqui
-   VITE_BACKEND_URL=http://localhost:3001
-   ```
-3. Reinicia el servidor frontend (`npm run dev`). El juego detectará automáticamente Supabase Cloud y sincronizará las victorias y el ranking global.
-
----
-
-## 📁 Estructura del Proyecto
-
-```
-RacingCar/
-├── archive/              # Recursos originales respaldados
-├── assets/               # Imágenes y videos de referencia
-│   ├── images/
-│   └── video/
-├── config/
-│   └── game-spec.json    # Constantes de diseño y jugabilidad
-├── database/
-│   ├── schema.sql        # Esquema SQL y función RPC para Supabase
-│   └── racing_data.json  # Almacén local persistente de pilotos
-├── public/
-│   └── assets/           # Archivos multimedia servidos por Vite
-├── server/
-│   └── index.js          # Servidor REST + API Supabase-compatible
-├── src/
-│   ├── game/
-│   │   ├── audio.js          # Sintetizador retro Web Audio API
-│   │   ├── carModel.js       # Generador procedural 3D de superdeportivos
-│   │   ├── track.js          # Spline del circuito, asfalto, bordillos y biomas
-│   │   ├── vehicle.js        # Físicas del jugador y derrape
-│   │   ├── aiRivals.js       # IA de los 7 bólidos rivales
-│   │   ├── cameraManager.js  # Cámaras 3D dinámicas
-│   │   ├── minimap.js        # Renderizado 2D en canvas del minimapa
-│   │   └── particles.js      # Sistema de partículas cúbicas de humo
-│   ├── services/
-│   │   └── supabaseClient.js # Cliente dual Supabase Cloud / Backend Local
-│   ├── main.js           # Bucle principal del juego y máquina de estados
-│   └── style.css         # Estilos retro arcade y HUD
-├── index.html            # Pantalla principal del juego y maquetación de vistas
-├── package.json
-└── vite.config.js
-```
+Si utilizas Supabase, ejecuta [`database/schema.sql`](file:///Users/natanaelalzatetorres/Desktop/Racing%20car/database/schema.sql) en el **SQL Editor** para crear la tabla `pilotos`, las políticas RLS y la función RPC atómica `registrar_victoria`.

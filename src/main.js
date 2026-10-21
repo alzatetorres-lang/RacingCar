@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { CircuitTrack } from './game/track.js';
+import { CircuitTrack, TRACK_CONFIGS } from './game/track.js';
 import { ParticleSystem } from './game/particles.js';
 import { PlayerVehicle } from './game/vehicle.js';
 import { AIRivalManager } from './game/aiRivals.js';
@@ -18,11 +18,15 @@ class ApexRacingGame {
     this.state = 'INTRO'; // INTRO, TITLE, GARAGE, COUNTDOWN, RACING, PAUSED, VICTORY, LEADERBOARD
     this.pilotName = 'APEX-88';
     this.pilotProfile = null;
+    this.trackIndex = 0;
 
     // Three.js Core
     this.scene = null;
     this.camera = null;
     this.renderer = null;
+    this.sunLight = null;
+    this.ambientLight = null;
+    this.sunMesh = null;
 
     // Game Modules
     this.track = null;
@@ -60,6 +64,11 @@ class ApexRacingGame {
       garageAiSpeed: document.getElementById('garage-ai-speed'),
       garageAiSkill: document.getElementById('garage-ai-skill'),
       garageAiRubber: document.getElementById('garage-ai-rubber'),
+      trackNumberBadge: document.getElementById('track-number-badge'),
+      trackNameDisplay: document.getElementById('track-name-display'),
+      trackDiffBadge: document.getElementById('track-difficulty-badge'),
+      trackThemeBadge: document.getElementById('track-theme-badge'),
+      trackDescDisplay: document.getElementById('track-desc-display'),
       victoryWins: document.getElementById('victory-total-wins'),
       victoryLeague: document.getElementById('victory-league'),
       leaderboardTbody: document.getElementById('leaderboard-tbody')
@@ -96,22 +105,22 @@ class ApexRacingGame {
     this.renderer.shadowMap.type = THREE.BasicShadowMap; // Hard 90s arcade shadows
 
     // Lighting: Warm Sunset & Ambient Twilight
-    const ambientLight = new THREE.AmbientLight(0xffb088, 0.75);
-    this.scene.add(ambientLight);
+    this.ambientLight = new THREE.AmbientLight(0xffb088, 0.75);
+    this.scene.add(this.ambientLight);
 
-    const sunLight = new THREE.DirectionalLight(0xffd580, 1.6);
-    sunLight.position.set(-200, 120, -300);
-    sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 2048;
-    sunLight.shadow.mapSize.height = 2048;
-    sunLight.shadow.camera.near = 10;
-    sunLight.shadow.camera.far = 800;
+    this.sunLight = new THREE.DirectionalLight(0xffd580, 1.6);
+    this.sunLight.position.set(-200, 120, -300);
+    this.sunLight.castShadow = true;
+    this.sunLight.shadow.mapSize.width = 2048;
+    this.sunLight.shadow.mapSize.height = 2048;
+    this.sunLight.shadow.camera.near = 10;
+    this.sunLight.shadow.camera.far = 800;
     const d = 160;
-    sunLight.shadow.camera.left = -d;
-    sunLight.shadow.camera.right = d;
-    sunLight.shadow.camera.top = d;
-    sunLight.shadow.camera.bottom = -d;
-    this.scene.add(sunLight);
+    this.sunLight.shadow.camera.left = -d;
+    this.sunLight.shadow.camera.right = d;
+    this.sunLight.shadow.camera.top = d;
+    this.sunLight.shadow.camera.bottom = -d;
+    this.scene.add(this.sunLight);
 
     // Skybox: Panoramic Sunset Cylinder
     const skyGeom = new THREE.CylinderGeometry(900, 900, 450, 32, 1, true);
@@ -129,12 +138,54 @@ class ApexRacingGame {
     // Giant Flat Low-Poly Sun on Horizon
     const sunGeom = new THREE.CircleGeometry(75, 24);
     const sunMat = new THREE.MeshBasicMaterial({ color: 0xffe066 });
-    const sunMesh = new THREE.Mesh(sunGeom, sunMat);
-    sunMesh.position.set(-600, 70, -600);
-    sunMesh.lookAt(0, 70, 0);
-    this.scene.add(sunMesh);
+    this.sunMesh = new THREE.Mesh(sunGeom, sunMat);
+    this.sunMesh.position.set(-600, 70, -600);
+    this.sunMesh.lookAt(0, 70, 0);
+    this.scene.add(this.sunMesh);
 
     window.addEventListener('resize', () => this.onWindowResize());
+  }
+
+  changeCircuit(delta) {
+    this.trackIndex = (this.trackIndex + delta + TRACK_CONFIGS.length) % TRACK_CONFIGS.length;
+    const cfg = TRACK_CONFIGS[this.trackIndex];
+
+    this.track.loadCircuit(cfg.id);
+    this.player.setTrack(this.track);
+    this.rivals.setTrack(this.track);
+    this.minimap.updateTrack(this.track);
+
+    // Update scene fog and lighting
+    if (this.scene && this.scene.fog) {
+      this.scene.fog.color.setHex(cfg.fogColor);
+      this.scene.fog.density = cfg.fogDensity;
+    }
+    if (this.sunLight) {
+      this.sunLight.color.setHex(cfg.sunColor);
+      this.sunLight.position.set(...cfg.sunPosition);
+    }
+    if (this.sunMesh) {
+      this.sunMesh.material.color.setHex(cfg.sunColor);
+    }
+
+    // Update UI elements
+    if (this.ui.trackNumberBadge) {
+      this.ui.trackNumberBadge.textContent = `CIRCUIT ${this.trackIndex + 1} / ${TRACK_CONFIGS.length}`;
+    }
+    if (this.ui.trackNameDisplay) {
+      this.ui.trackNameDisplay.textContent = cfg.name;
+    }
+    if (this.ui.trackDiffBadge) {
+      this.ui.trackDiffBadge.textContent = cfg.difficulty;
+    }
+    if (this.ui.trackThemeBadge) {
+      this.ui.trackThemeBadge.textContent = `${cfg.theme.toUpperCase()} BIOME`;
+    }
+    if (this.ui.trackDescDisplay) {
+      this.ui.trackDescDisplay.textContent = cfg.desc;
+    }
+
+    audio.playClick();
   }
 
   initModules() {
@@ -251,7 +302,7 @@ class ApexRacingGame {
       // Switch banner to zone name after 2 seconds
       setTimeout(() => {
         if (this.state === 'RACING') {
-          this.ui.hudBanner.textContent = 'EMERALD GROVE';
+          this.ui.hudBanner.textContent = this.track.currentConfig.shortName;
           this.ui.hudBanner.className = 'hud-banner';
           this.ui.hudBanner.style.color = '#fff';
         }
@@ -336,6 +387,12 @@ class ApexRacingGame {
       audio.playClick();
       this.switchState('LEADERBOARD');
     });
+
+    // Circuit Select buttons
+    const prevTrackBtn = document.getElementById('btn-prev-track');
+    const nextTrackBtn = document.getElementById('btn-next-track');
+    if (prevTrackBtn) prevTrackBtn.addEventListener('click', () => this.changeCircuit(-1));
+    if (nextTrackBtn) nextTrackBtn.addEventListener('click', () => this.changeCircuit(1));
 
     // Pause screen buttons
     document.getElementById('btn-resume-race').addEventListener('click', () => {
@@ -552,11 +609,8 @@ class ApexRacingGame {
       if (this.player.currentLap === 3) {
         this.ui.hudBanner.textContent = '★ FINAL LAP! ★';
         this.ui.hudBanner.style.color = 'var(--arcade-yellow)';
-      } else if (this.player.currentU > 0.45 && this.player.currentU < 0.85) {
-        this.ui.hudBanner.textContent = 'EMERALD GROVE';
-        this.ui.hudBanner.style.color = '#fff';
       } else {
-        this.ui.hudBanner.textContent = 'SUNSET COAST';
+        this.ui.hudBanner.textContent = this.track.currentConfig.shortName;
         this.ui.hudBanner.style.color = '#fff';
       }
     }

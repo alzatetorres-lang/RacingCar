@@ -16,28 +16,33 @@ export class PlayerVehicle {
     });
     this.scene.add(this.mesh);
 
-    // Dynamic Physics parameters
+    // Balanced Arcade Physics parameters
     this.speedKmh = 0;
-    this.maxSpeedKmh = 235; // ~146 MPH base, boost up to ~165 MPH
-    this.acceleration = 70; // km/h per second
-    this.braking = 120;
-    this.friction = 25;
-    this.turnSpeed = 2.4; // rad/s
-    this.heading = 0; // Y rotation angle
-    this.lateralVelocity = 0;
+    this.baseMaxSpeed = 230; // ~143 MPH
+    this.boostMaxSpeed = 265; // ~165 MPH with drift boost
+    this.acceleration = 65; // km/h per sec
+    this.braking = 140;
+    this.friction = 24;
+
+    // Smooth lateral lane steering
+    this.lateralOffset = 0; // meters from centerline
+    this.steerAngle = 0; // Visual & physical steer angle (-1 to +1)
+    this.heading = 0;
+
+    // Drift mechanics
     this.isDrifting = false;
     this.driftIntensity = 0;
-    this.offroadSpeedPenalty = 0.55;
+    this.driftAngle = 0; // Visual slip angle in radians
+    this.driftBoostTimer = 0;
 
     // Track progression
     this.currentU = 0;
     this.currentLap = 1;
     this.maxLaps = 3;
-    this.lastCheckpoint = 0;
     this.hasCrossedHalfway = false;
+    this.nearFinish = false;
     this.totalDistance = 0;
     this.isFinished = false;
-    this.racePosition = 8; // Start at 8/8
 
     // Controls state
     this.inputs = {
@@ -48,71 +53,70 @@ export class PlayerVehicle {
       drift: false
     };
 
-    // Smoke particle timer
     this.smokeTimer = 0;
+    this.resetToStart();
+  }
 
+  setTrack(newTrack) {
+    this.track = newTrack;
     this.resetToStart();
   }
 
   resetToStart(gridIndex = 7) {
-    // Player starts at position 8 (index 7, back of the pack)
     this.speedKmh = 0;
-    this.lateralVelocity = 0;
+    this.steerAngle = 0;
     this.isDrifting = false;
+    this.driftIntensity = 0;
+    this.driftAngle = 0;
+    this.driftBoostTimer = 0;
     this.currentLap = 1;
-    this.lastCheckpoint = 0;
     this.hasCrossedHalfway = false;
+    this.nearFinish = false;
     this.isFinished = false;
 
-    // Place at start line, offset slightly back
-    const startU = 0.005 - gridIndex * 0.0035;
-    const u = (startU + 1.0) % 1.0;
-    this.currentU = u;
-    const pt = this.track.curve.getPointAt(u);
-    const tangent = this.track.curve.getTangentAt(u);
-    const up = new THREE.Vector3(0, 1, 0);
-    const side = new THREE.Vector3().crossVectors(tangent, up).normalize();
+    // Player starts at back of grid (slot 7)
+    const startU = 0.005 - (gridIndex * 0.0035);
+    this.currentU = (startU + 1.0) % 1.0;
+    this.lateralOffset = (gridIndex % 2 === 0 ? -3.5 : 3.5);
 
-    // Stagger grid slots (left/right)
-    const lateralOffset = (gridIndex % 2 === 0 ? -3.5 : 3.5);
-    const pos = new THREE.Vector3().copy(pt).addScaledVector(side, lateralOffset);
-    pos.y += 0.2;
-
-    this.mesh.position.copy(pos);
-    this.heading = Math.atan2(-tangent.x, -tangent.z);
-    this.mesh.rotation.set(0, this.heading, 0);
-
+    this.updateTransform(0);
     this.totalDistance = this.currentLap + this.currentU;
   }
 
   update(dt, canMove = true) {
     if (!canMove) {
       this.speedKmh = 0;
-      audio.updateEngine(0, this.maxSpeedKmh, false);
+      audio.updateEngine(0, this.baseMaxSpeed, false);
       return;
     }
 
     const { forward, backward, left, right, drift } = this.inputs;
 
-    // Check track boundaries
-    const trackInfo = this.track.getTrackProgress(this.mesh.position);
-    this.currentU = trackInfo.u;
+    // Check if offroad (beyond asphalt edge)
+    const halfWidth = this.track.trackWidth / 2;
+    const isOffroad = Math.abs(this.lateralOffset) > halfWidth;
 
-    const maxEffectiveSpeed = trackInfo.isOffroad
-      ? this.maxSpeedKmh * this.offroadSpeedPenalty
-      : this.maxSpeedKmh;
+    // Effective max speed
+    let currentMaxSpeed = this.baseMaxSpeed;
+    if (this.driftBoostTimer > 0) {
+      this.driftBoostTimer -= dt;
+      currentMaxSpeed = this.boostMaxSpeed;
+    }
+    if (isOffroad) {
+      currentMaxSpeed = Math.min(currentMaxSpeed, 135); // Gentle speed limit on grass
+    }
 
     // Acceleration & Braking
     if (forward) {
-      this.speedKmh = Math.min(this.speedKmh + this.acceleration * dt, maxEffectiveSpeed);
+      this.speedKmh = Math.min(this.speedKmh + this.acceleration * dt, currentMaxSpeed);
     } else if (backward) {
       if (this.speedKmh > 0) {
         this.speedKmh = Math.max(0, this.speedKmh - this.braking * dt);
       } else {
-        this.speedKmh = Math.max(-45, this.speedKmh - (this.acceleration * 0.5) * dt);
+        this.speedKmh = Math.max(-45, this.speedKmh - (this.acceleration * 0.6) * dt);
       }
     } else {
-      // Natural deceleration / rolling resistance
+      // Natural rolling resistance
       if (this.speedKmh > 0) {
         this.speedKmh = Math.max(0, this.speedKmh - this.friction * dt);
       } else if (this.speedKmh < 0) {
@@ -120,112 +124,136 @@ export class PlayerVehicle {
       }
     }
 
-    // Steering & Drift Mechanics
-    const speedFactor = Math.min(Math.abs(this.speedKmh) / 60, 1.0);
-    let steerInput = 0;
-    if (left) steerInput += 1;
-    if (right) steerInput -= 1;
+    // Steering input target (-1 to +1)
+    let steerTarget = 0;
+    if (left) steerTarget -= 1;
+    if (right) steerTarget += 1;
 
-    // Handbrake / Drift check
-    const wantsDrift = drift || (Math.abs(steerInput) > 0 && this.speedKmh > 110 && Math.abs(trackInfo.lateralDist) > 3.0);
-    this.isDrifting = wantsDrift && Math.abs(steerInput) > 0 && this.speedKmh > 40;
+    // Smooth progressive steering (eliminates twitchy oversteering)
+    const steerResponseSpeed = 7.0; // Smooth response
+    this.steerAngle += (steerTarget - this.steerAngle) * steerResponseSpeed * dt;
 
+    // Drift Detection (Space pressed or sharp steering at high speed)
+    const wantsDrift = drift || (Math.abs(steerTarget) > 0 && this.speedKmh > 130 && Math.abs(this.steerAngle) > 0.65);
+    const wasDrifting = this.isDrifting;
+    this.isDrifting = wantsDrift && Math.abs(steerTarget) > 0 && this.speedKmh > 50;
+
+    // Drift handling & reward boost on exit
     if (this.isDrifting) {
       this.driftIntensity = Math.min(this.driftIntensity + dt * 4.0, 1.0);
-      const driftTurnMultiplier = 1.45;
-      this.heading += steerInput * this.turnSpeed * driftTurnMultiplier * speedFactor * dt;
-      // Lateral slide
-      this.lateralVelocity += steerInput * dt * 25.0;
+      const targetDriftAngle = -steerTarget * 0.38; // ~22 degrees slip angle
+      this.driftAngle += (targetDriftAngle - this.driftAngle) * 6.0 * dt;
       audio.setDrift(true, this.driftIntensity);
     } else {
-      this.driftIntensity = Math.max(0, this.driftIntensity - dt * 5.0);
-      this.heading += steerInput * this.turnSpeed * speedFactor * dt;
-      this.lateralVelocity *= 0.92; // Damping
+      if (wasDrifting && this.driftIntensity > 0.6) {
+        // Rewarding drift exit boost!
+        this.driftBoostTimer = 1.3;
+        this.speedKmh = Math.min(this.speedKmh + 22, this.boostMaxSpeed);
+      }
+      this.driftIntensity = Math.max(0, this.driftIntensity - dt * 6.0);
+      this.driftAngle *= 0.85; // Fast centering
       audio.setDrift(false);
     }
 
-    // Update car position from heading and velocity
-    const speedMps = (this.speedKmh / 3.6);
-    const forwardDir = new THREE.Vector3(
-      -Math.sin(this.heading),
-      0,
-      -Math.cos(this.heading)
-    );
-    const sideDir = new THREE.Vector3(
-      Math.cos(this.heading),
-      0,
-      -Math.sin(this.heading)
-    );
+    // Lateral Movement across the road
+    // Scales smoothly with forward speed (at 0 speed, car doesn't slide laterally)
+    const speedRatio = Math.min(Math.abs(this.speedKmh) / 70, 1.0);
+    const lateralSpeedBase = this.isDrifting ? 17.5 : 13.0;
+    const lateralDelta = this.steerAngle * lateralSpeedBase * speedRatio * dt;
+    this.lateralOffset += lateralDelta;
 
-    const movement = new THREE.Vector3()
-      .copy(forwardDir)
-      .multiplyScalar(speedMps * dt)
-      .addScaledVector(sideDir, this.lateralVelocity * dt);
+    // Constrain lateral offset so player doesn't wander infinitely into the abyss
+    const maxLateralLimit = halfWidth + 4.5;
+    this.lateralOffset = Math.max(-maxLateralLimit, Math.min(maxLateralLimit, this.lateralOffset));
 
-    this.mesh.position.add(movement);
+    // Progress along spline
+    const speedMps = this.speedKmh / 3.6;
+    const deltaU = (speedMps * dt) / this.track.totalLength;
+    this.currentU = (this.currentU + deltaU + 1.0) % 1.0;
 
-    // Keep car conforming to road surface elevation
-    this.mesh.position.y = trackInfo.centerPt.y + 0.15;
+    // Update 3D Object Transform
+    this.updateTransform(dt);
 
-    // Visual roll and wheel turn
-    const visualSteerAngle = -steerInput * (this.isDrifting ? 0.45 : 0.28);
-    this.mesh.rotation.y = this.heading;
-    this.mesh.rotation.z = -steerInput * (this.isDrifting ? 0.08 : 0.03); // Slight body roll
+    // Exhaust & Tire Smoke Particles
+    this.updateParticles(dt, speedMps, forward);
 
-    // Animate wheels
+    // Update Sound Engine
+    audio.updateEngine(this.speedKmh, this.baseMaxSpeed, forward);
+
+    // Lap Progression
+    this.updateLapProgress();
+  }
+
+  updateTransform(dt) {
+    const pt = this.track.curve.getPointAt(this.currentU);
+    const tangent = this.track.curve.getTangentAt(this.currentU);
+    const up = new THREE.Vector3(0, 1, 0);
+    const side = new THREE.Vector3().crossVectors(tangent, up).normalize();
+
+    // World position: on spline + lateral lane offset
+    const worldPos = new THREE.Vector3().copy(pt).addScaledVector(side, this.lateralOffset);
+    worldPos.y = pt.y + 0.15;
+    this.mesh.position.copy(worldPos);
+
+    // Orientation: follows road tangent + steering yaw + drift slip angle
+    const roadHeading = Math.atan2(-tangent.x, -tangent.z);
+    const chassisYaw = roadHeading + (this.steerAngle * 0.18) + (this.isDrifting ? this.driftAngle : 0);
+    this.heading = chassisYaw;
+
+    this.mesh.rotation.y = chassisYaw;
+    this.mesh.rotation.z = -this.steerAngle * (this.isDrifting ? 0.08 : 0.035); // Body lean
+
+    // Wheel spin and front wheel steering
     if (this.mesh.userData.wheels) {
+      const speedMps = this.speedKmh / 3.6;
       const wheelRotSpeed = (speedMps / 0.38) * dt;
       this.mesh.userData.wheels.forEach(w => {
-        w.children[0].rotation.x += wheelRotSpeed; // Tire
-        w.children[1].rotation.x += wheelRotSpeed; // Rim
+        w.children[0].rotation.x += wheelRotSpeed;
+        w.children[1].rotation.x += wheelRotSpeed;
         if (w.userData.isFront) {
-          w.rotation.y = visualSteerAngle;
+          w.rotation.y = this.steerAngle * 0.42;
         }
       });
     }
+  }
 
-    // Smoke particles during drift or hard acceleration
+  updateParticles(dt, speedMps, isAccelerating) {
     this.smokeTimer += dt;
     if (this.smokeTimer >= 0.035) {
       this.smokeTimer = 0;
-      if (this.isDrifting || (forward && this.speedKmh < 60)) {
-        // Emit from rear wheels
+
+      // Tire smoke during drift or burnout
+      if (this.isDrifting || (isAccelerating && this.speedKmh < 45)) {
         const rearWheelL = this.mesh.localToWorld(new THREE.Vector3(-1.0, 0.1, 1.4));
         const rearWheelR = this.mesh.localToWorld(new THREE.Vector3(1.0, 0.1, 1.4));
         this.particles.emit(rearWheelL, new THREE.Vector3(0, 0.8, 0), 0.5, 0.35);
         this.particles.emit(rearWheelR, new THREE.Vector3(0, 0.8, 0), 0.5, 0.35);
       }
-      // Exhaust smoke
-      if (forward && this.mesh.userData.exhaustPoints) {
+
+      // Exhaust pipe smoke
+      if (isAccelerating && this.mesh.userData.exhaustPoints) {
+        const forwardDir = new THREE.Vector3(-Math.sin(this.heading), 0, -Math.cos(this.heading));
         this.mesh.userData.exhaustPoints.forEach(pt => {
           const worldExhaust = this.mesh.localToWorld(pt.clone());
-          this.particles.emit(worldExhaust, forwardDir.clone().negate().multiplyScalar(2.0), 0.3, 0.15);
+          this.particles.emit(worldExhaust, forwardDir.clone().negate().multiplyScalar(2.0), 0.28, 0.14);
         });
       }
     }
-
-    // Update sound engine
-    audio.updateEngine(this.speedKmh, this.maxSpeedKmh, forward);
-
-    // Lap and Checkpoint Progression
-    this.updateLapProgress(trackInfo.u);
   }
 
-  updateLapProgress(u) {
+  updateLapProgress() {
     if (this.isFinished) return;
 
-    // Check halfway mark to prevent cheating
+    const u = this.currentU;
     if (u > 0.45 && u < 0.65) {
       this.hasCrossedHalfway = true;
     }
 
-    // Finish line crossing check
-    if (this.hasCrossedHalfway && u > 0.96) {
+    if (this.hasCrossedHalfway && u > 0.95) {
       this.nearFinish = true;
     }
 
     if (this.nearFinish && u < 0.08) {
-      // Completed a lap!
       this.currentLap += 1;
       this.hasCrossedHalfway = false;
       this.nearFinish = false;
@@ -237,7 +265,6 @@ export class PlayerVehicle {
       }
     }
 
-    // Calculate monotonic progress for leaderboards
     this.totalDistance = (this.currentLap - 1) + u;
   }
 

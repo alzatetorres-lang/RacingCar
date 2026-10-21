@@ -6,7 +6,15 @@ export class Minimap {
     this.width = canvasElement.width;
     this.height = canvasElement.height;
 
-    // Compute bounding box of track curve
+    this.calculateBounds();
+  }
+
+  updateTrack(circuitTrack) {
+    this.track = circuitTrack;
+    this.calculateBounds();
+  }
+
+  calculateBounds() {
     this.bounds = { minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity };
     const samples = 150;
     this.trackPoints = [];
