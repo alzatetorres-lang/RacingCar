@@ -50,6 +50,10 @@ class ApexRacingGame {
       viewPause: document.getElementById('view-pause'),
       viewVictory: document.getElementById('view-victory'),
       viewLeaderboard: document.getElementById('view-leaderboard'),
+      introVideo: document.getElementById('intro-video'),
+      introStartOverlay: document.getElementById('intro-start-overlay'),
+      introHud: document.getElementById('intro-hud'),
+      introProgressFill: document.getElementById('intro-progress-fill'),
       hud: document.getElementById('hud-overlay'),
       hudPos: document.getElementById('hud-pos'),
       hudLap: document.getElementById('hud-lap'),
@@ -198,11 +202,37 @@ class ApexRacingGame {
     this.minimap = new Minimap(minimapCanvas, this.track);
   }
 
-  playIntroVideo() {
-    const video = document.getElementById('intro-video');
-    if (video) {
+  playIntroVideo(forceSound = false) {
+    const video = this.ui.introVideo;
+    if (!video) return;
+
+    if (!this.introListenersAttached) {
+      this.introListenersAttached = true;
+      video.addEventListener('timeupdate', () => {
+        if (video.duration && this.ui.introProgressFill) {
+          const pct = (video.currentTime / video.duration) * 100;
+          this.ui.introProgressFill.style.width = `${pct}%`;
+        }
+      });
+      video.addEventListener('ended', () => {
+        audio.playClick();
+        this.switchState('TITLE');
+      });
+    }
+
+    if (forceSound) {
+      if (this.ui.introStartOverlay) this.ui.introStartOverlay.classList.add('hidden');
+      if (this.ui.introHud) this.ui.introHud.classList.remove('hidden');
+      video.muted = false;
+      video.currentTime = 0;
+      video.play().catch(err => {
+        console.warn('Playback error with sound:', err);
+      });
+    } else {
+      // Start muted preview; waiting for click to enable sound
+      video.muted = true;
       video.play().catch(() => {
-        console.log('Video autoplay prevented, waiting for user interaction');
+        console.log('Video autoplay waiting for click');
       });
     }
   }
@@ -221,9 +251,11 @@ class ApexRacingGame {
 
     if (newState === 'INTRO') {
       this.ui.viewIntro.classList.remove('hidden');
+      if (this.ui.introStartOverlay) this.ui.introStartOverlay.classList.remove('hidden');
+      if (this.ui.introHud) this.ui.introHud.classList.add('hidden');
     } else if (newState === 'TITLE') {
       this.ui.viewTitle.classList.remove('hidden');
-      const vid = document.getElementById('intro-video');
+      const vid = this.ui.introVideo;
       if (vid) vid.pause();
     } else if (newState === 'GARAGE') {
       this.ui.viewGarage.classList.remove('hidden');
@@ -350,15 +382,43 @@ class ApexRacingGame {
   }
 
   initEventListeners() {
-    // Audio activation & Intro skip
-    const triggerStart = () => {
+    // Intro start with sound & skip handlers
+    const startIntroWithSound = () => {
       audio.init();
       audio.playClick();
+      this.playIntroVideo(true);
+    };
+
+    if (this.ui.introStartOverlay) {
+      this.ui.introStartOverlay.addEventListener('click', startIntroWithSound);
+    }
+    const btnStartIntro = document.getElementById('btn-start-intro');
+    if (btnStartIntro) {
+      btnStartIntro.addEventListener('click', e => {
+        e.stopPropagation();
+        startIntroWithSound();
+      });
+    }
+
+    const skipIntro = () => {
+      audio.init();
+      audio.playClick();
+      if (this.ui.introVideo) this.ui.introVideo.pause();
       this.switchState('TITLE');
     };
 
-    document.getElementById('btn-skip-intro').addEventListener('click', triggerStart);
-    this.ui.viewIntro.addEventListener('click', triggerStart);
+    const btnSkip = document.getElementById('btn-skip-intro');
+    if (btnSkip) {
+      btnSkip.addEventListener('click', skipIntro);
+    }
+
+    const btnTitleIntro = document.getElementById('btn-title-intro');
+    if (btnTitleIntro) {
+      btnTitleIntro.addEventListener('click', () => {
+        this.switchState('INTRO');
+        this.playIntroVideo(true);
+      });
+    }
 
     // Title Start
     document.getElementById('btn-title-start').addEventListener('click', () => {
@@ -458,7 +518,11 @@ class ApexRacingGame {
     // Keyboard Controls
     window.addEventListener('keydown', e => {
       if (this.state === 'INTRO') {
-        triggerStart();
+        if (this.ui.introStartOverlay && !this.ui.introStartOverlay.classList.contains('hidden')) {
+          startIntroWithSound();
+        } else if (e.code === 'Escape' || e.code === 'Space') {
+          skipIntro();
+        }
         return;
       }
 

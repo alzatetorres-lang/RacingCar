@@ -17,10 +17,38 @@
 
     <!-- VIEW 1: Attract Mode / Retro Intro Video -->
     <div class="game-view" id="view-intro">
-      <video id="intro-video" src="/assets/video/intro.mp4" playsinline muted loop></video>
-      <div class="intro-overlay-text">
-        <div class="retro-blink">★ INSERT COIN / PRESS ANY KEY ★</div>
-        <button class="skip-intro-btn" id="btn-skip-intro">PRESS START &gt;</button>
+      <video id="intro-video" src="/assets/video/intro.mp4" playsinline preload="auto"></video>
+      
+      <!-- Initial Click-to-Play Overlay (Ensures Audio Context & Video play with full sound) -->
+      <div id="intro-start-overlay" class="intro-start-overlay">
+        <div class="retro-arcade-box">
+          <div class="retro-blink-fast" style="font-size: 20px; color: var(--arcade-yellow); margin-bottom: 15px;">
+            ★ INSERT COIN ★
+          </div>
+          <div style="font-size: 13px; color: #fff; margin-bottom: 20px; line-height: 1.6;">
+            APEX-88 RACING CAR ARCADE
+          </div>
+          <button class="arcade-btn" id="btn-start-intro" style="font-size: 14px; padding: 16px 32px;">
+            ▶ START / PLAY INTRO
+          </button>
+          <div style="margin-top: 15px; font-size: 9px; color: #aaa;">
+            CLICK TO ACTIVATE SOUND & CINEMATIC INTRO
+          </div>
+        </div>
+      </div>
+
+      <!-- VCR / Retro Arcade Overlay while playing -->
+      <div id="intro-hud" class="intro-hud hidden">
+        <div class="intro-vcr-top">
+          <span style="color: #00ff66;">● PLAY <span class="retro-blink-slow">SP</span></span>
+          <span style="color: #ffe600;">APEX-88 // ARCHIVE 1988</span>
+        </div>
+        <div class="intro-vcr-bottom">
+          <div class="intro-progress-track">
+            <div id="intro-progress-fill" class="intro-progress-fill"></div>
+          </div>
+          <button class="skip-intro-btn" id="btn-skip-intro">SKIP INTRO [ESC] &gt;</button>
+        </div>
       </div>
     </div>
 
@@ -33,6 +61,7 @@
           <input type="text" id="pilot-name-input" class="arcade-input" value="APEX-88" maxlength="15" autocomplete="off" spellcheck="false">
         </div>
         <button class="arcade-btn" id="btn-title-start">PRESS START</button>
+        <button class="arcade-btn secondary" id="btn-title-intro" style="margin-top: 10px; font-size: 10px; padding: 10px 18px;">★ REPLAY INTRO VIDEO ★</button>
         <div style="margin-top: 15px; font-size: 9px; color: #888;">© 198X ARCADE CORP / SUPABASE EDITION</div>
       </div>
     </div>

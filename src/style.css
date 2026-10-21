@@ -85,6 +85,7 @@ html, body {
 #view-intro {
   background-color: #000;
   z-index: 30;
+  position: relative;
 }
 
 #intro-video {
@@ -93,30 +94,97 @@ html, body {
   object-fit: cover;
 }
 
-.intro-overlay-text {
+.intro-start-overlay {
   position: absolute;
-  bottom: 40px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 5, 10, 0.88);
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 15px;
-  animation: blink 0.9s infinite alternate;
+  z-index: 32;
+  cursor: pointer;
 }
 
-.retro-blink {
-  font-size: 16px;
-  color: var(--arcade-yellow);
-  text-shadow: 2px 2px #000, 0 0 12px var(--arcade-yellow);
+.retro-arcade-box {
+  background: rgba(15, 18, 28, 0.95);
+  border: 4px solid var(--arcade-yellow);
+  box-shadow: 0 0 35px rgba(255, 230, 0, 0.6), inset 0 0 20px rgba(0, 0, 0, 0.8);
+  padding: 35px 45px;
+  text-align: center;
+  max-width: 520px;
+  width: 90%;
+}
+
+.intro-hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 25px;
+  z-index: 31;
+}
+
+.intro-vcr-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  text-shadow: 2px 2px #000;
+}
+
+.intro-vcr-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 15px;
+  pointer-events: auto;
+}
+
+.intro-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid #444;
+}
+
+.intro-progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--arcade-yellow), var(--arcade-orange));
+  transition: width 0.1s linear;
 }
 
 .skip-intro-btn {
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.75);
   border: 2px solid #fff;
   color: #fff;
   font-family: var(--font-pixel);
   font-size: 11px;
-  padding: 8px 16px;
+  padding: 10px 18px;
   cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  transition: background 0.1s, transform 0.1s;
+}
+
+.skip-intro-btn:hover {
+  background: var(--arcade-yellow);
+  color: #000;
+  transform: translateY(-2px);
+}
+
+.retro-blink-fast {
+  animation: blink 0.5s infinite alternate;
+}
+
+.retro-blink-slow {
+  animation: blink 1.2s infinite alternate;
 }
 
 /* 2. Title Screen */
